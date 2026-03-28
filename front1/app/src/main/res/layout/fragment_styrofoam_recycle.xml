@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/background">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+            <!-- 신문·책자류 카드 -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="@color/white">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="18dp"
+                    android:gravity="center">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="스티로폼 완충재"
+                        android:textSize="24sp"
+                        style="@style/TextTitle"/>
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="220dp"
+                        android:layout_height="140dp"
+                        android:layout_margin="6dp"
+                        app:cardCornerRadius="20dp"
+                        app:cardElevation="0dp">
+
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/img_styrofoam"/>
+                    </androidx.cardview.widget.CardView>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="내용물을 비우고 물로 헹구는 등 \n이물질을 제거하여 배출합니다.\n\n부착상표 등 스티로폼과 다른 재질은 \n제거한 후 배출합니다.\n\nTV 등 전자제품 구입 시 완충재로 사용되는 발포합성수지 포장재는 가급적 구입처로 반납합니다."
+                        android:textAlignment="center"
+                        style="@style/TextBody"/>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+
+
+            <!-- 주의사항 카드 -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="@color/white">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <!-- 주의 헤더 -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:background="@color/warning"
+                        android:gravity="center">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="주의"
+                            android:textColor="@color/white"
+                            android:textSize="24sp"
+                            style="@style/TextTitle"/>
+
+                        <ImageView
+                            android:layout_width="21dp"
+                            android:layout_height="17dp"
+                            android:layout_marginStart="8dp"
+                            android:src="@drawable/ic_warning"/>
+                    </LinearLayout>
+
+                    <!-- 주의사항 내용 -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="8dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="정육점에서 사용하는 스티로폼 트레이처럼 \n무늬와 색상이 있거나 비닐이 코팅된 스티로폼은 재활용이 불가능합니다.\n\n사과, 배 등의 과일 개별 포장에 쓰이는 스티로폼은 \n재활용 가치가 낮아 폐기처리 돼서 일반쓰레기로 배출합니다.\n\n일회용 접시, 컵라면 용기 등의 스티로폼은\n 음식물이 완전히 제거되어야 합니다. 씻어도 완전히 \n제거 되지 않는다면 일반쓰레기로 배출합니다."
+                            android:layout_marginTop="8dp"
+                            android:layout_marginBottom="24dp"
+                            android:textAlignment="center"
+                            style="@style/TextBody"/>
+
+
+                    </LinearLayout>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="60dp"/>
+        </LinearLayout>
+</LinearLayout>

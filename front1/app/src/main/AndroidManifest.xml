@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.greenlens">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature android:name="android.hardware.camera" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="28" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:usesCleartextTraffic="true"
+        android:theme="@style/Theme.GreenLens">
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.example.greenlens.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
+        <activity
+            android:name=".view.SplashActivity"
+            android:exported="true"
+            android:theme="@style/Theme.GreenLens">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".view.LoginActivity"
+            android:exported="false"
+            android:theme="@style/Theme.GreenLens" />
+
+        <activity
+            android:name=".view.SignUpActivity"
+            android:exported="false"
+            android:theme="@style/Theme.GreenLens" />
+
+        <activity
+            android:name=".view.MainActivity"
+            android:exported="true"
+            android:theme="@style/Theme.GreenLens">
+
+        </activity>
+        <!-- CouponHistoryActivity 추가 -->
+        <activity
+            android:name=".view.CouponHistoryActivity"
+            android:exported="false" />
+
+
+        <!-- ShopDetailActivity 추가 -->
+        <activity
+            android:name=".view.ShopDetailActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".view.CouponActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".view.PointHistoryActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".view.CameraActivity"
+            android:exported="false" />
+
+        <activity android:name=".view.SettingActivity" />
+        <activity android:name=".view.EditProfileActivity" />
+
+        <activity
+            android:name=".view.CouponUseActivity"
+            android:exported="false" />
+
+    </application>
+
+</manifest>

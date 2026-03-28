@@ -1,0 +1,111 @@
+<resources>
+    <!-- 텍스트 스타일 - Material Design 타이포그래피 적용 -->
+    <style name="TextTitle" parent="TextAppearance.MaterialComponents.Headline5">
+        <item name="android:fontFamily">@font/jalnan</item>
+        <item name="fontFamily">@font/jalnan</item>
+        <item name="android:textSize">24sp</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:letterSpacing">-0.01</item>
+        <item name="android:lineSpacingMultiplier">1.2</item>
+    </style>
+
+    <style name="TextSubtitle" parent="TextAppearance.MaterialComponents.Headline6">
+        <item name="android:fontFamily">@font/jalnan</item>
+        <item name="fontFamily">@font/jalnan</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:letterSpacing">-0.01</item>
+        <item name="android:lineSpacingMultiplier">1.2</item>
+    </style>
+
+    <style name="TextBody" parent="TextAppearance.MaterialComponents.Body1">
+        <item name="android:fontFamily">@font/jeongi_anjunche</item>
+        <item name="fontFamily">@font/jeongi_anjunche</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/text_secondary</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="android:lineSpacingMultiplier">1.5</item>
+    </style>
+
+    <style name="TextHeader" parent="TextAppearance.MaterialComponents.Subtitle1">
+        <item name="android:fontFamily">@font/jeongi_anjunche</item>
+        <item name="fontFamily">@font/jeongi_anjunche</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="android:lineSpacingMultiplier">1.3</item>
+    </style>
+
+    <style name="TextSmall" parent="TextAppearance.MaterialComponents.Caption">
+        <item name="android:fontFamily">@font/jeongi_anjunche</item>
+        <item name="fontFamily">@font/jeongi_anjunche</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/text_hint</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+
+    <style name="TextCaption" parent="TextAppearance.MaterialComponents.Caption">
+        <item name="android:fontFamily">@font/jeongi_anjunche</item>
+        <item name="fontFamily">@font/jeongi_anjunche</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/text_hint</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+
+    <style name="TextWarningTitle" parent="TextAppearance.MaterialComponents.Subtitle2">
+        <item name="android:fontFamily">@font/jalnan</item>
+        <item name="fontFamily">@font/jalnan</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/warning</item>
+    </style>
+
+    <style name="TextInputLayoutHint" parent="TextAppearance.MaterialComponents.Subtitle1">
+        <item name="android:fontFamily">@font/jeongi_anjunche</item>
+        <item name="fontFamily">@font/jeongi_anjunche</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/text_hint</item>
+    </style>
+
+    <!-- 카드 스타일 -->
+    <style name="CardView.GreenLens" parent="Widget.MaterialComponents.CardView">
+        <item name="cardCornerRadius">16dp</item>
+        <item name="cardElevation">2dp</item>
+        <item name="cardBackgroundColor">@color/white</item>
+        <item name="contentPadding">16dp</item>
+        <item name="strokeWidth">0dp</item>
+    </style>
+
+    <!-- 둥근 모서리가 더 큰 카드 스타일 -->
+    <style name="CardView.GreenLens.Round" parent="CardView.GreenLens">
+        <item name="cardCornerRadius">20dp</item>
+    </style>
+
+    <!-- 작은 카드 스타일 (패딩 적음) -->
+    <style name="CardView.GreenLens.Small" parent="CardView.GreenLens">
+        <item name="contentPadding">8dp</item>
+    </style>
+
+    <!-- 플랫 카드 스타일 (그림자 없음) -->
+    <style name="CardView.GreenLens.Flat" parent="CardView.GreenLens">
+        <item name="cardElevation">0dp</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="strokeColor">@color/divider</item>
+    </style>
+
+    <!-- 입력 필드 스타일 -->
+    <style name="TextInputLayout.GreenLens" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="boxStrokeColor">@color/main_green</item>
+        <item name="boxStrokeWidth">1dp</item>
+        <item name="boxCornerRadiusTopStart">12dp</item>
+        <item name="boxCornerRadiusTopEnd">12dp</item>
+        <item name="boxCornerRadiusBottomStart">12dp</item>
+        <item name="boxCornerRadiusBottomEnd">12dp</item>
+        <item name="hintTextColor">@color/main_green</item>
+    </style>
+
+    <!-- 아이콘 스타일 -->
+    <style name="IconStyle">
+        <item name="tint">@color/main_green</item>
+    </style>
+
+</resources>

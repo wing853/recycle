@@ -1,0 +1,10 @@
+# 모든 텍스트 파일은 LF로 강제 설정
+* text=auto
+
+# Maven 관련 파일 줄바꿈 강제 설정
+*.lst text eol=lf
+*.properties text eol=lf
+*.yml text eol=lf
+*.xml text eol=lf
+*.java text eol=lf
+*.kt text eol=lf

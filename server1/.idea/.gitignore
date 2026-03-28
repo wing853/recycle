@@ -1,0 +1,14 @@
+# 디폴트 무시된 파일
+/shelf/
+/workspace.xml
+# 빌드 결과물
+target/
+# Maven build output
+/target/
+
+# IDE 설정
+.idea/
+.vscode/
+
+# Lombok 설정
+lombok.config

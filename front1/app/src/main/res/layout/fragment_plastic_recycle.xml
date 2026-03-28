@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/background">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+
+            <!-- 신문·책자류 카드 -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="@color/white">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="18dp"
+                    android:gravity="center">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="페트병"
+                        android:textSize="24sp"
+                        style="@style/TextTitle"/>
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="220dp"
+                        android:layout_height="140dp"
+                        android:layout_margin="6dp"
+                        app:cardCornerRadius="20dp"
+                        app:cardElevation="0dp">
+
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/img_pet_bottles"/>
+                    </androidx.cardview.widget.CardView>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="내용물을 비우고 물로 헹구는 등 \n이물질을 제거하여 배출합니다.\n\n부착상표, 부속품 등 \n본체와 다른 재질은 제거한 후 배출합니다.\n\n운반 중 부피를 줄이고 오염방지를 위해\n찌그러트리고 뚜껑을 닫아 배출합니다."
+                        android:textAlignment="center"
+                        style="@style/TextBody"/>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- 상자류 카드 -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="@color/white">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="18dp"
+                    android:gravity="center">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="플라스틱 용기류"
+                        android:textSize="24sp"
+                        style="@style/TextTitle"/>
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="220dp"
+                        android:layout_height="140dp"
+                        android:layout_margin="6dp"
+                        app:cardCornerRadius="20dp"
+                        app:cardElevation="0dp">
+
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/img_plastics"/>
+                    </androidx.cardview.widget.CardView>
+
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="내용물을 비우고 물로 헹구는 등 \n이물질을 제거하여 배출합니다.\n\n부착상표, 부속품 등 \n본체와 다른 재질은 제거한 후 배출합니다."
+                        android:textAlignment="center"
+                        style="@style/TextBody"/>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+
+            <!-- 주의사항 카드 -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="@color/white">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <!-- 주의 헤더 -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:background="@color/warning"
+                        android:gravity="center">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="주의"
+                            android:textColor="@color/white"
+                            android:textSize="24sp"
+                            style="@style/TextTitle"/>
+
+                        <ImageView
+                            android:layout_width="21dp"
+                            android:layout_height="17dp"
+                            android:layout_marginStart="8dp"
+                            android:src="@drawable/ic_warning"/>
+                    </LinearLayout>
+
+                    <!-- 주의사항 내용 -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="8dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="유색 페트병은 기존 플라스틱류에 배출합니다.\n\n요구르트병, 샴푸통, 세제통 등 다른 재질인 뚜껑이나 펌프는 분리해서 배출합니다.\n플라스틱 이외의 재질이 부착된 유모차, 완구 등은 대형폐기물 품목으로 배출합니다."
+                            android:layout_marginTop="8dp"
+                            android:layout_marginBottom="24dp"
+                            android:textAlignment="center"
+                            style="@style/TextBody"/>
+
+
+                    </LinearLayout>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="60dp"/>
+        </LinearLayout>
+</LinearLayout>

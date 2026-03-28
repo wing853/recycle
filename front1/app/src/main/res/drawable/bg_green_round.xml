@@ -1,0 +1,6 @@
+<!-- drawable/bg_green_round.xml -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@color/sub_green"/>
+    <corners android:radius="20dp"/>
+</shape>

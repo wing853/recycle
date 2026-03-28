@@ -1,0 +1,17 @@
+{
+  "groups": [
+    {
+      "name": "jwt",
+      "type": "com.example.demo.config.JwtConfig",
+      "sourceType": "com.example.demo.config.JwtConfig"
+    }
+  ],
+  "properties": [
+    {
+      "name": "jwt.secret",
+      "type": "java.lang.String",
+      "sourceType": "com.example.demo.config.JwtConfig"
+    }
+  ],
+  "hints": []
+}

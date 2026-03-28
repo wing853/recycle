@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:paddingHorizontal="16dp"
+    android:paddingVertical="12dp">
+
+    <!-- 날짜 -->
+    <TextView
+        android:id="@+id/text_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="2024-11-21"
+        android:textSize="11sp"
+        android:textColor="@color/gray"
+        style="@style/TextBody"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <!-- 분류 태그 -->
+    <TextView
+        android:id="@+id/text_category"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="종이류"
+        android:textColor="@color/white"
+        android:textSize="13sp"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="4dp"
+        android:background="@drawable/bg_green_round"
+        style="@style/TextTitle"
+        android:layout_marginStart="8dp"
+        app:layout_constraintStart_toEndOf="@id/text_date"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <!-- 적립 포인트 -->
+    <LinearLayout
+        android:id="@+id/layout_earned_point"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        app:layout_constraintEnd_toStartOf="@id/layout_total_point"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginEnd="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="적립 포인트"
+            android:textSize="11sp"
+            style="@style/TextBody"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginTop="2dp">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_plus"/>
+
+            <TextView
+                android:id="@+id/text_earned_point"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="1000P"
+                android:textSize="14sp"
+                android:layout_marginStart="2dp"
+                style="@style/TextTitle"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- 사용(차감) 포인트 -->
+    <LinearLayout
+        android:id="@+id/layout_used_point"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        app:layout_constraintEnd_toStartOf="@id/layout_total_point"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginEnd="16dp"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="사용 포인트"
+            android:textSize="11sp"
+            style="@style/TextBody"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginTop="2dp">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_minus"/>
+
+            <TextView
+                android:id="@+id/text_used_point"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="-1500P"
+                android:textColor="@color/red"
+                android:textSize="14sp"
+                android:layout_marginStart="2dp"
+                style="@style/TextTitle"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- 잔여 포인트 -->
+    <LinearLayout
+        android:id="@+id/layout_total_point"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="잔여 포인트"
+            android:textSize="11sp"
+            style="@style/TextBody"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginTop="2dp">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_point"/>
+
+            <TextView
+                android:id="@+id/text_total_point"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0P"
+                android:textSize="14sp"
+                android:layout_marginStart="2dp"
+                style="@style/TextTitle"/>
+        </LinearLayout>
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
