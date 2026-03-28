@@ -1,8 +1,10 @@
-CREATE TABLE recycle_analysis_result (
+CREATE TABLE recycle_log (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    analysis_id BIGINT NOT NULL,
-    category VARCHAR(100) NOT NULL,
-    confidence DOUBLE NOT NULL,
-    disposal_method VARCHAR(255) NOT NULL,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    user_id BIGINT NOT NULL,
+    analysis_id BIGINT,
+    disposal_category VARCHAR(255),
+    disposal_method VARCHAR(255),
+    category VARCHAR(255),
+    created_at DATETIME,
+    FOREIGN KEY (user_id) REFERENCES users(id)
 );
