@@ -14,7 +14,7 @@ RUN chmod +x mvnw
 RUN ./mvnw clean package -DskipTests
 
 # 최종 실행 환경 설정
-FROM openjdk:17-jdk-slim
+FROM eclipse-temurin:17-jdk
 WORKDIR /app
 
 # 빌드된 JAR 파일 복사
