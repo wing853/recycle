@@ -7,7 +7,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import java.util.concurrent.TimeUnit;
 
 public class ApiClient {
-    private static final String BASE_URL = "https://green-87zt.onrender.com/";
+    private static final String BASE_URL = "https://recycle-xizw.onrender.com/";
     private static ApiClient instance;
     private final ApiService apiService;
 
