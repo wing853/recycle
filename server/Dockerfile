@@ -1,5 +1,5 @@
 # OpenJDK 17 사용More actions
-FROM openjdk:17-jdk-slim AS builder
+FROM eclipse-temurin:17-jdk AS builder
 
 # 작업 디렉토리 설정
 WORKDIR /app
