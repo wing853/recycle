@@ -15,14 +15,14 @@ com\example\demo\dto\PurchaseResponse.class
 com\example\demo\service\RecycleService.class
 com\example\demo\dto\PurchaseRequest.class
 com\example\demo\dto\RecycleLogResponse$RecycleLogResponseBuilder.class
+com\example\demo\controller\ShopController.class
 com\example\demo\service\PointService.class
 com\example\demo\entity\UserCoupon.class
-com\example\demo\controller\ShopController.class
 com\example\demo\dto\UserLoginResponse$UserLoginResponseBuilder.class
 com\example\demo\repository\PointHistoryRepository.class
 com\example\demo\dto\UserSignupRequest.class
-com\example\demo\entity\RecycleLog.class
 com\example\demo\controller\HelloController.class
+com\example\demo\entity\RecycleLog.class
 com\example\demo\repository\PointRepository.class
 com\example\demo\dto\PurchaseResponse$CouponDetails.class
 com\example\demo\dto\UserLoginRequest.class
