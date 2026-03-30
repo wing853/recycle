@@ -1,9 +1,13 @@
 package com.example.greenlens.api;
 
+import com.example.greenlens.manager.UserManager;
+
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+
 import java.util.concurrent.TimeUnit;
 
 public class ApiClient {
@@ -12,17 +16,30 @@ public class ApiClient {
     private final ApiService apiService;
 
     private ApiClient() {
-        // 로깅 인터셉터 설정
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
         loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
-        // OkHttpClient 설정
         OkHttpClient client = new OkHttpClient.Builder()
+                .addInterceptor(chain -> {
+                    Request original = chain.request();
+
+                    // 토큰 가져오기
+                    String token = UserManager.getInstance(null).getToken();
+
+                    Request.Builder requestBuilder = original.newBuilder();
+
+                    if (token != null && !token.isEmpty()) {
+                        requestBuilder.addHeader("Authorization", "Bearer " + token);
+                    }
+
+                    Request request = requestBuilder.build();
+                    return chain.proceed(request);
+                })
                 .addInterceptor(loggingInterceptor)
                 .connectTimeout(30, TimeUnit.SECONDS)
                 .readTimeout(30, TimeUnit.SECONDS)
                 .writeTimeout(30, TimeUnit.SECONDS)
-                .retryOnConnectionFailure(true)  // 연결 실패 시 재시도
+                .retryOnConnectionFailure(true)
                 .build();
 
         Retrofit retrofit = new Retrofit.Builder()
