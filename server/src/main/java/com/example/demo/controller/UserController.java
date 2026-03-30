@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/users")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "https://green-87zt.onrender.com")
+@CrossOrigin(origins = "https://recycle-9bar.onrender.com")
 public class UserController {
 
     private final UserService userService;
