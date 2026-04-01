@@ -86,7 +86,7 @@ public class CameraActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         // API 서비스 초기화
-        apiService = ApiClient.getInstance().getApiService();
+        apiService = ApiClient.getInstance(this).getApiService();
 
         // UserManager 초기화 및 토큰 가져오기
         userManager = UserManager.getInstance(this);

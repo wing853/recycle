@@ -133,7 +133,7 @@ public class SignUpActivity extends AppCompatActivity {
         String password = binding.etPassword.getText().toString().trim();
         String username = binding.etNickname.getText().toString().trim();
 
-        ApiService apiService = ApiClient.getInstance().getApiService();
+        ApiService apiService = ApiClient.getInstance(this).getApiService();
         SignupRequest signupRequest = new SignupRequest(username, email, password);
 
         try {

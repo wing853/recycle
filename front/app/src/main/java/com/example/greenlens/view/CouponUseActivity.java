@@ -53,7 +53,7 @@ public class CouponUseActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         // API 서비스 초기화
-        apiService = ApiClient.getInstance().getApiService();
+        apiService = ApiClient.getInstance(this).getApiService();
         userManager = UserManager.getInstance(this);
 
         // Intent에서 쿠폰 ID와 상품명 가져오기

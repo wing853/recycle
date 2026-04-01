@@ -46,7 +46,7 @@ public class ShopDetailActivity extends AppCompatActivity {
 
         // 유저 매니저 및 API 서비스 초기화
         userManager = UserManager.getInstance(this);
-        apiService = ApiClient.getInstance().getApiService();
+        apiService = ApiClient.getInstance(this).getApiService();
 
         // View 초기화
         imageProduct = findViewById(R.id.image_product);

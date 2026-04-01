@@ -1,8 +1,11 @@
 package com.example.greenlens.viewmodel;
 
+import android.app.Application;
+
+import androidx.annotation.NonNull;
+import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
 
 import com.example.greenlens.api.ApiClient;
 import com.example.greenlens.api.ApiService;
@@ -12,7 +15,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class AppSettingsViewModel extends ViewModel {
+public class AppSettingsViewModel extends AndroidViewModel {
     private ApiService apiService;
 
     private MutableLiveData<AppSettings> settings = new MutableLiveData<>();
@@ -20,9 +23,9 @@ public class AppSettingsViewModel extends ViewModel {
     private MutableLiveData<String> errorMessage = new MutableLiveData<>();
     private MutableLiveData<Boolean> updateSuccess = new MutableLiveData<>(false);
 
-    public AppSettingsViewModel() {
-        apiService = ApiClient.getInstance().getApiService();
-        // 기본 설정값 설정
+    public AppSettingsViewModel(@NonNull Application application) {
+        super(application);
+        apiService = ApiClient.getInstance(application).getApiService();
         settings.setValue(new AppSettings());
     }
 
@@ -64,7 +67,7 @@ public class AppSettingsViewModel extends ViewModel {
             @Override
             public void onFailure(Call<AppSettings> call, Throwable t) {
                 loading.setValue(false);
-                errorMessage.setValue("네트워크 오류가 발생했습니다: " + t.getMessage());
+                errorMessage.setValue("네트워크 오류: " + t.getMessage());
             }
         });
     }
@@ -86,7 +89,7 @@ public class AppSettingsViewModel extends ViewModel {
                     settings.setValue(response.body());
                     updateSuccess.setValue(true);
                 } else {
-                    errorMessage.setValue("설정 변경에 실패했습니다.");
+                    errorMessage.setValue("설정 변경 실패");
                     updateSuccess.setValue(false);
                 }
             }
@@ -94,13 +97,12 @@ public class AppSettingsViewModel extends ViewModel {
             @Override
             public void onFailure(Call<AppSettings> call, Throwable t) {
                 loading.setValue(false);
-                errorMessage.setValue("네트워크 오류가 발생했습니다: " + t.getMessage());
+                errorMessage.setValue("네트워크 오류: " + t.getMessage());
                 updateSuccess.setValue(false);
             }
         });
     }
 
-    // 테마 변경
     public void updateTheme(String token, String newTheme) {
         AppSettings currentSettings = settings.getValue();
         if (currentSettings != null) {
@@ -109,7 +111,6 @@ public class AppSettingsViewModel extends ViewModel {
         }
     }
 
-    // 알림 설정 변경
     public void updateNotifications(String token, boolean notifications) {
         AppSettings currentSettings = settings.getValue();
         if (currentSettings != null) {
@@ -118,7 +119,6 @@ public class AppSettingsViewModel extends ViewModel {
         }
     }
 
-    // 언어 설정 변경
     public void updateLanguage(String token, String language) {
         AppSettings currentSettings = settings.getValue();
         if (currentSettings != null) {

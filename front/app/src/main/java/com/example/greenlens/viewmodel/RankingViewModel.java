@@ -15,6 +15,7 @@ import java.util.Map;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import com.example.greenlens.manager.UserManager;
 
 public class RankingViewModel extends ViewModel {
     private final ApiService apiService;
@@ -23,8 +24,8 @@ public class RankingViewModel extends ViewModel {
     private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>(false);
     private final MutableLiveData<String> errorMessage = new MutableLiveData<>();
 
-    public RankingViewModel() {
-        apiService = ApiClient.getInstance().getApiService();
+    public RankingViewModel(UserManager userManager) {
+        this.apiService = userManager.getApiService(); // ✅ UserManager에서 가져오기
     }
 
     public LiveData<List<Map<String, Object>>> getRankings() {

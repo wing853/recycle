@@ -30,7 +30,7 @@ public class PointHistoryViewModel extends ViewModel {
 
     public PointHistoryViewModel(UserManager userManager) {
         this.userManager = userManager;
-        this.apiService = ApiClient.getInstance().getApiService();
+        this.apiService = userManager.getApiService();
     }
 
     public LiveData<List<Map<String, Object>>> getPointHistory() {

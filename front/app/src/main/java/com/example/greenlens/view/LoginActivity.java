@@ -73,7 +73,7 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         showLoading(true);
-        ApiService apiService = ApiClient.getInstance().getApiService();
+        ApiService apiService = ApiClient.getInstance(this).getApiService();
         LoginRequest loginRequest = new LoginRequest(email, password);
 
         try {

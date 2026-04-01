@@ -28,8 +28,8 @@ public class PointViewModel extends ViewModel {
     private MutableLiveData<String> errorMessage = new MutableLiveData<>();
 
     public PointViewModel(UserManager userManager) {
-        this.apiService = ApiClient.getInstance().getApiService();
         this.userManager = userManager;
+        this.apiService = userManager.getApiService(); // ✅ 여기 수정
     }
 
     public LiveData<List<Map<String, Object>>> getPointHistory() {
@@ -56,37 +56,32 @@ public class PointViewModel extends ViewModel {
             authToken = "Bearer " + token;
         }
 
-        String finalToken = authToken.startsWith("Bearer ") ? authToken : "Bearer " + authToken;
-
         Long userId = null;
-        try {
-            if (userManager != null && userManager.getCurrentUser() != null) {
-                userId = userManager.getCurrentUser().getUserId();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (userManager != null && userManager.getCurrentUser() != null) {
+            userId = userManager.getCurrentUser().getUserId();
         }
+
         if (userId == null) {
             loading.setValue(false);
             errorMessage.setValue("로그인 정보가 올바르지 않습니다.");
             return;
         }
 
-        apiService.getPointHistory(finalToken, userId).enqueue(new retrofit2.Callback<List<Map<String, Object>>>() {
+        apiService.getPointHistory(authToken, userId).enqueue(new Callback<List<Map<String, Object>>>() {
             @Override
-            public void onResponse(retrofit2.Call<List<Map<String, Object>>> call, retrofit2.Response<List<Map<String, Object>>> response) {
+            public void onResponse(Call<List<Map<String, Object>>> call, Response<List<Map<String, Object>>> response) {
                 loading.setValue(false);
                 if (response.isSuccessful() && response.body() != null) {
                     pointHistory.setValue(response.body());
                 } else {
-                    errorMessage.setValue("포인트 내역을 불러오는데 실패했습니다.");
+                    errorMessage.setValue("포인트 내역 불러오기 실패");
                 }
             }
 
             @Override
-            public void onFailure(retrofit2.Call<List<Map<String, Object>>> call, Throwable t) {
+            public void onFailure(Call<List<Map<String, Object>>> call, Throwable t) {
                 loading.setValue(false);
-                errorMessage.setValue("네트워크 오류가 발생했습니다: " + t.getMessage());
+                errorMessage.setValue("네트워크 오류: " + t.getMessage());
             }
         });
     }
@@ -106,14 +101,14 @@ public class PointViewModel extends ViewModel {
                 if (response.isSuccessful() && response.body() != null) {
                     pointInfo.setValue(response.body());
                 } else {
-                    errorMessage.setValue("포인트 정보를 불러오는데 실패했습니다.");
+                    errorMessage.setValue("포인트 정보 불러오기 실패");
                 }
             }
 
             @Override
             public void onFailure(Call<PointResponse> call, Throwable t) {
                 loading.setValue(false);
-                errorMessage.setValue("네트워크 오류가 발생했습니다: " + t.getMessage());
+                errorMessage.setValue("네트워크 오류: " + t.getMessage());
             }
         });
     }
@@ -126,7 +121,8 @@ public class PointViewModel extends ViewModel {
             authToken = "Bearer " + token;
         }
 
-        apiService.usePoints(authToken, userId, new com.example.greenlens.model.request.PointUseRequest(pointsToUse, reason))
+        apiService.usePoints(authToken, userId,
+                        new com.example.greenlens.model.request.PointUseRequest(pointsToUse, reason))
                 .enqueue(new Callback<PointResponse>() {
                     @Override
                     public void onResponse(Call<PointResponse> call, Response<PointResponse> response) {
@@ -134,14 +130,14 @@ public class PointViewModel extends ViewModel {
                         if (response.isSuccessful() && response.body() != null) {
                             pointInfo.setValue(response.body());
                         } else {
-                            errorMessage.setValue("포인트 사용에 실패했습니다.");
+                            errorMessage.setValue("포인트 사용 실패");
                         }
                     }
 
                     @Override
                     public void onFailure(Call<PointResponse> call, Throwable t) {
                         loading.setValue(false);
-                        errorMessage.setValue("네트워크 오류가 발생했습니다: " + t.getMessage());
+                        errorMessage.setValue("네트워크 오류: " + t.getMessage());
                     }
                 });
     }

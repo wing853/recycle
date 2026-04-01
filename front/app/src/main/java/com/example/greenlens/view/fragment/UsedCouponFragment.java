@@ -42,7 +42,7 @@ public class UsedCouponFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_used_coupon, container, false);
 
         // API 서비스 초기화
-        apiService = ApiClient.getInstance().getApiService();
+        apiService = ApiClient.getInstance(requireActivity().getApplication()).getApiService();;
         userManager = UserManager.getInstance(requireContext());
 
         recyclerView = view.findViewById(R.id.recycler_used_coupons);

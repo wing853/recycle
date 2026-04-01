@@ -37,7 +37,7 @@ public class EditProfileActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         userManager = UserManager.getInstance(this);
-        apiService = ApiClient.getInstance().getApiService();
+        apiService = ApiClient.getInstance(this).getApiService();
         userRepository = UserRepository.getInstance(this);
 
         setupViews();

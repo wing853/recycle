@@ -12,18 +12,20 @@ import java.util.Map;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import android.content.Context;
 
 public class PointRepository {
     private static PointRepository instance;
     private final ApiService apiService;
 
-    private PointRepository() {
-        apiService = ApiClient.getInstance().getApiService();
+    private PointRepository(Context context) {
+        Context appContext = context.getApplicationContext(); // ✅ 이 줄 있어야 함
+        apiService = ApiClient.getInstance(appContext).getApiService();
     }
 
-    public static synchronized PointRepository getInstance() {
+    public static synchronized PointRepository getInstance(Context context) {
         if (instance == null) {
-            instance = new PointRepository();
+            instance = new PointRepository(context);
         }
         return instance;
     }

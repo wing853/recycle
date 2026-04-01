@@ -36,10 +36,16 @@ public class UserManager {
     private UserRepository userRepository;
 
     private UserManager(Context context) {
-        preferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        Context appContext = context.getApplicationContext();
+
+        preferences = appContext.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         gson = new Gson();
-        apiService = ApiClient.getInstance().getApiService();
-        userRepository = UserRepository.getInstance(context);
+
+        // 🔥 여기 수정 (this → appContext)
+        apiService = ApiClient.getInstance(appContext).getApiService();
+
+        userRepository = UserRepository.getInstance(appContext);
+
         loadUser();
         loadToken();
     }

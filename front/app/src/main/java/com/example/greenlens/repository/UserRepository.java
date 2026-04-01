@@ -23,12 +23,16 @@ public class UserRepository {
     private User currentUser;
 
     private UserRepository(Context context) {
-        preferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        Context appContext = context.getApplicationContext();
+
+        preferences = appContext.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         gson = new Gson();
-        apiService = ApiClient.getInstance().getApiService();
+
+        // 여기 수정 (this → appContext)
+        apiService = ApiClient.getInstance(appContext).getApiService();
+
         loadUser();
     }
-
     public static synchronized UserRepository getInstance(Context context) {
         if (instance == null) {
             instance = new UserRepository(context.getApplicationContext());

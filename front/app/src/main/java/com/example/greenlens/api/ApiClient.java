@@ -1,5 +1,7 @@
 package com.example.greenlens.api;
 
+import android.content.Context;
+
 import com.example.greenlens.manager.UserManager;
 
 import okhttp3.OkHttpClient;
@@ -15,7 +17,8 @@ public class ApiClient {
     private static ApiClient instance;
     private final ApiService apiService;
 
-    private ApiClient() {
+    private ApiClient(Context context) {
+
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
         loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
@@ -23,8 +26,8 @@ public class ApiClient {
                 .addInterceptor(chain -> {
                     Request original = chain.request();
 
-                    // 토큰 가져오기
-                    String token = UserManager.getInstance(null).getToken();
+                    // ✅ context 제대로 넣기
+                    String token = UserManager.getInstance(context).getToken();
 
                     Request.Builder requestBuilder = original.newBuilder();
 
@@ -32,8 +35,7 @@ public class ApiClient {
                         requestBuilder.addHeader("Authorization", "Bearer " + token);
                     }
 
-                    Request request = requestBuilder.build();
-                    return chain.proceed(request);
+                    return chain.proceed(requestBuilder.build());
                 })
                 .addInterceptor(loggingInterceptor)
                 .connectTimeout(30, TimeUnit.SECONDS)
@@ -51,9 +53,10 @@ public class ApiClient {
         apiService = retrofit.create(ApiService.class);
     }
 
-    public static synchronized ApiClient getInstance() {
+    // ✅ context 받도록 변경
+    public static synchronized ApiClient getInstance(Context context) {
         if (instance == null) {
-            instance = new ApiClient();
+            instance = new ApiClient(context.getApplicationContext());
         }
         return instance;
     }
