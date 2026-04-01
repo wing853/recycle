@@ -148,7 +148,7 @@ public class EditProfileActivity extends AppCompatActivity {
             authToken = "Bearer " + token;
         }
 
-        apiService.updateUserProfile(authToken, currentUser.getUserId(), currentUser).enqueue(new Callback<User>() {
+        apiService.updateUserProfile(authToken, currentUser).enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
                 showLoading(false);

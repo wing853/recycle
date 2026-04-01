@@ -119,7 +119,7 @@ public class SettingActivity extends AppCompatActivity {
             authToken = "Bearer " + token;
         }
 
-        userManager.getApiService().deleteAccount(authToken, userId).enqueue(new retrofit2.Callback<Void>() {
+        userManager.getApiService().deleteAccount(authToken).enqueue(new retrofit2.Callback<Void>() {
             @Override
             public void onResponse(retrofit2.Call<Void> call, retrofit2.Response<Void> response) {
                 showLoading(false);
