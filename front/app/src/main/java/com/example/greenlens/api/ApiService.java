@@ -32,123 +32,83 @@ public interface ApiService {
 
     // ⭐ 내 정보 조회 (JWT 기반)
     @GET("users/profile")
-    Call<User> getUserProfile(@Header("Authorization") String token);
+    Call<User> getUserProfile();
 
     // ⭐ 내 정보 수정
     @PUT("users/profile")
-    Call<User> updateUserProfile(
-            @Header("Authorization") String token,
-            @Body User user
-    );
+    Call<User> updateUserProfile(@Body User user);
 
     // ⭐ 회원 탈퇴
     @DELETE("users/profile")
-    Call<Void> deleteAccount(@Header("Authorization") String token);
+    Call<Void> deleteAccount();
 
     @POST("users/logout")
-    Call<Void> logout(@Header("Authorization") String token);
+    Call<Void> logout();
 
 
     // ===== 이미지 분석 =====
 
     @POST("recycle/analyze")
-    Call<AnalyzeResponse> analyzeImage(
-            @Header("Authorization") String token,
-            @Body String base64Image
-    );
+    Call<AnalyzeResponse> analyzeImage(@Body String base64Image);
 
     @Multipart
     @POST("recycle/analyze")
-    Call<AnalyzeResponse> analyzeImageMultipart(
-            @Header("Authorization") String token,
-            @Part MultipartBody.Part image
-    );
+    Call<AnalyzeResponse> analyzeImageMultipart(@Part MultipartBody.Part image);
 
     @GET("recycle/result/{analysis_id}")
-    Call<AnalysisResultResponse> getAnalysisResult(
-            @Header("Authorization") String token,
-            @Path("analysis_id") Long analysisId
-    );
+    Call<AnalysisResultResponse> getAnalysisResult(@Path("analysis_id") Long analysisId);
 
 
     // ===== 포인트 =====
 
     @GET("users/{user_id}/points")
-    Call<PointResponse> getUserPoints(
-            @Header("Authorization") String token,
-            @Path("user_id") Long userId
-    );
+    Call<PointResponse> getUserPoints(@Path("user_id") Long userId);
 
     @POST("users/{user_id}/points/use")
     Call<PointResponse> usePoints(
-            @Header("Authorization") String token,
             @Path("user_id") Long userId,
             @Body PointUseRequest request
     );
 
     @GET("users/{user_id}/points/history")
-    Call<List<Map<String, Object>>> getPointHistory(
-            @Header("Authorization") String token,
-            @Path("user_id") Long userId
-    );
+    Call<List<Map<String, Object>>> getPointHistory(@Path("user_id") Long userId);
 
 
     // ===== 분리수거 =====
 
     @GET("recycle/logs")
-    Call<List<Map<String, Object>>> getRecycleActivities(
-            @Header("Authorization") String token
-    );
+    Call<List<Map<String, Object>>> getRecycleActivities();
 
     @DELETE("recycle/log/{log_id}")
-    Call<Map<String, Object>> deleteRecycleActivity(
-            @Header("Authorization") String token,
-            @Path("log_id") Long logId
-    );
+    Call<Map<String, Object>> deleteRecycleActivity(@Path("log_id") Long logId);
 
 
     // ===== 앱 설정 =====
 
     @GET("settings")
-    Call<AppSettings> getAppSettings(
-            @Header("Authorization") String token
-    );
+    Call<AppSettings> getAppSettings();
 
     @PUT("settings")
-    Call<AppSettings> updateAppSettings(
-            @Header("Authorization") String token,
-            @Body AppSettings settings
-    );
+    Call<AppSettings> updateAppSettings(@Body AppSettings settings);
 
 
     // ===== 랭킹 =====
 
     @GET("ranking/leaderboard")
-    Call<LeaderboardResponse> getLeaderboard(
-            @Header("Authorization") String token
-    );
+    Call<LeaderboardResponse> getLeaderboard();
 
 
     // ===== 쿠폰 =====
 
     @GET("coupons")
-    Call<Map<String, Object>> getCoupons(@Header("Authorization") String token);
+    Call<Map<String, Object>> getCoupons();
 
     @POST("shop/coupons/{coupon_id}/purchase")
-    Call<Map<String, Object>> purchaseCoupon(
-            @Header("Authorization") String token,
-            @Path("coupon_id") Long couponId
-    );
+    Call<Map<String, Object>> purchaseCoupon(@Path("coupon_id") Long couponId);
 
     @POST("shop/coupons/{couponId}/use")
-    Call<Map<String, Object>> useCoupon(
-            @Header("Authorization") String token,
-            @Path("couponId") Long couponId
-    );
+    Call<Map<String, Object>> useCoupon(@Path("couponId") Long couponId);
 
     @GET("users/{user_id}/coupons")
-    Call<Map<String, Object>> getUserCoupons(
-            @Header("Authorization") String token,
-            @Path("user_id") Long userId
-    );
+    Call<Map<String, Object>> getUserCoupons(@Path("user_id") Long userId);
 }

@@ -64,7 +64,7 @@ public class UserRepository {
             authToken = "Bearer " + token;
         }
 
-        apiService.getUserProfile(authToken).enqueue(new Callback<User>() {
+        apiService.getUserProfile().enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
                 if (response.isSuccessful() && response.body() != null) {
@@ -94,7 +94,7 @@ public class UserRepository {
             authToken = "Bearer " + token;
         }
 
-        apiService.updateUserProfile("Bearer " + token, user).enqueue(new Callback<User>() {
+        apiService.updateUserProfile(user).enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
                 if (response.isSuccessful() && response.body() != null) {

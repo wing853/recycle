@@ -447,7 +447,7 @@ public class CameraActivity extends AppCompatActivity {
 
             // API 호출
             DevLog.d(TAG, "Sending image to server... Size: " + compressedFile.length() + " bytes, Name: " + fileName);
-            apiService.analyzeImageMultipart(finalAuthToken, body).enqueue(new Callback<AnalyzeResponse>() {
+            apiService.analyzeImageMultipart(body).enqueue(new Callback<AnalyzeResponse>() {
                 @Override
                 public void onResponse(@NonNull Call<AnalyzeResponse> call, @NonNull Response<AnalyzeResponse> response) {
                     binding.progressBar.setVisibility(View.GONE);
@@ -582,7 +582,7 @@ public class CameraActivity extends AppCompatActivity {
             finalAuthToken = "Bearer " + finalAuthToken;
         }
         DevLog.d(TAG, "[getAnalysisResult] 최종 Authorization 헤더: " + finalAuthToken);
-        apiService.getAnalysisResult(finalAuthToken, analysisId).enqueue(new Callback<AnalysisResultResponse>() {
+        apiService.getAnalysisResult(analysisId).enqueue(new Callback<AnalysisResultResponse>() {
             @Override
             public void onResponse(Call<AnalysisResultResponse> call, Response<AnalysisResultResponse> response) {
                 binding.progressBar.setVisibility(View.GONE);

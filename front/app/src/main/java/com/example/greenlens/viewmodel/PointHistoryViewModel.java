@@ -63,7 +63,7 @@ public class PointHistoryViewModel extends ViewModel {
         isLoading.setValue(true);
         DevLog.d(TAG, "포인트 내역 불러오기 시작...");
 
-        apiService.getPointHistory(finalToken, userId).enqueue(new Callback<List<Map<String, Object>>>() {
+        apiService.getPointHistory(userId).enqueue(new Callback<List<Map<String, Object>>>() {
             @Override
             public void onResponse(Call<List<Map<String, Object>>> call, Response<List<Map<String, Object>>> response) {
                 isLoading.setValue(false);

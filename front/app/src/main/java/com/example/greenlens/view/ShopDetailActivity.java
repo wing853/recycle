@@ -197,7 +197,7 @@ public class ShopDetailActivity extends AppCompatActivity {
                 ", User Points: " + currentUser.getPoints());
 
         // 구매 API 호출
-        apiService.purchaseCoupon(authToken, coupon.getId()).enqueue(new Callback<Map<String, Object>>() {
+        apiService.purchaseCoupon(coupon.getId()).enqueue(new Callback<Map<String, Object>>() {
             @Override
             public void onResponse(Call<Map<String, Object>> call, Response<Map<String, Object>> response) {
                 android.util.Log.d("ShopDetailActivity", "Purchase API response received - Code: " + response.code());

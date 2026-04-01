@@ -26,13 +26,13 @@ public class ApiClient {
                 .addInterceptor(chain -> {
                     Request original = chain.request();
 
-                    // ✅ context 제대로 넣기
                     String token = UserManager.getInstance(context).getToken();
 
                     Request.Builder requestBuilder = original.newBuilder();
 
+                    // 🔥 핵심: addHeader → header 로 변경
                     if (token != null && !token.isEmpty()) {
-                        requestBuilder.addHeader("Authorization", "Bearer " + token);
+                        requestBuilder.header("Authorization", "Bearer " + token);
                     }
 
                     return chain.proceed(requestBuilder.build());
@@ -53,7 +53,6 @@ public class ApiClient {
         apiService = retrofit.create(ApiService.class);
     }
 
-    // ✅ context 받도록 변경
     public static synchronized ApiClient getInstance(Context context) {
         if (instance == null) {
             instance = new ApiClient(context.getApplicationContext());

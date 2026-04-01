@@ -79,7 +79,7 @@ public class UsedCouponFragment extends Fragment {
         Long userId = currentUser.getUserId();
         DevLog.d(TAG, "Loading used coupons for user ID: " + userId);
 
-        apiService.getUserCoupons(authToken, userId).enqueue(new Callback<Map<String, Object>>() {
+        apiService.getUserCoupons(userId).enqueue(new Callback<Map<String, Object>>() {
             @Override
             public void onResponse(Call<Map<String, Object>> call, Response<Map<String, Object>> response) {
                 DevLog.d(TAG, "API Response - Code: " + response.code());

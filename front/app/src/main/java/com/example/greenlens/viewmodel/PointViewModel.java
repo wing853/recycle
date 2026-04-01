@@ -67,7 +67,7 @@ public class PointViewModel extends ViewModel {
             return;
         }
 
-        apiService.getPointHistory(authToken, userId).enqueue(new Callback<List<Map<String, Object>>>() {
+        apiService.getPointHistory(userId).enqueue(new Callback<List<Map<String, Object>>>() {
             @Override
             public void onResponse(Call<List<Map<String, Object>>> call, Response<List<Map<String, Object>>> response) {
                 loading.setValue(false);
@@ -94,7 +94,7 @@ public class PointViewModel extends ViewModel {
             authToken = "Bearer " + token;
         }
 
-        apiService.getUserPoints(authToken, userId).enqueue(new Callback<PointResponse>() {
+        apiService.getUserPoints(userId).enqueue(new Callback<PointResponse>() {
             @Override
             public void onResponse(Call<PointResponse> call, Response<PointResponse> response) {
                 loading.setValue(false);
@@ -121,8 +121,7 @@ public class PointViewModel extends ViewModel {
             authToken = "Bearer " + token;
         }
 
-        apiService.usePoints(authToken, userId,
-                        new com.example.greenlens.model.request.PointUseRequest(pointsToUse, reason))
+        apiService.usePoints(userId, new com.example.greenlens.model.request.PointUseRequest(pointsToUse, reason))
                 .enqueue(new Callback<PointResponse>() {
                     @Override
                     public void onResponse(Call<PointResponse> call, Response<PointResponse> response) {

@@ -165,7 +165,7 @@ public class UserManager {
             authToken = "Bearer " + token;
         }
 
-        apiService.getUserProfile(authToken).enqueue(new Callback<User>() {
+        apiService.getUserProfile().enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
                 if (response.isSuccessful() && response.body() != null) {

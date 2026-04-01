@@ -31,7 +31,7 @@ public class PointRepository {
     }
 
     public void getUserPoints(String token, Long userId, PointCallback<PointResponse> callback) {
-        apiService.getUserPoints("Bearer " + token, userId).enqueue(new Callback<PointResponse>() {
+        apiService.getUserPoints(userId).enqueue(new Callback<PointResponse>() {
             @Override
             public void onResponse(Call<PointResponse> call, Response<PointResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
@@ -50,7 +50,7 @@ public class PointRepository {
 
     public void usePoints(String token, Long userId, int pointsToUse, String reason, PointCallback<PointResponse> callback) {
         PointUseRequest request = new PointUseRequest(pointsToUse, reason);
-        apiService.usePoints("Bearer " + token, userId, request).enqueue(new Callback<PointResponse>() {
+        apiService.usePoints(userId, request).enqueue(new Callback<PointResponse>() {
             @Override
             public void onResponse(Call<PointResponse> call, Response<PointResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
@@ -68,7 +68,7 @@ public class PointRepository {
     }
 
     public void getPointHistory(String token, Long userId, PointCallback<List<Point>> callback) {
-        apiService.getPointHistory("Bearer " + token, userId).enqueue(new Callback<List<Map<String, Object>>>() {
+        apiService.getPointHistory(userId).enqueue(new Callback<List<Map<String, Object>>>() {
             @Override
             public void onResponse(Call<List<Map<String, Object>>> call, Response<List<Map<String, Object>>> response) {
                 if (response.isSuccessful() && response.body() != null) {

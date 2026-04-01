@@ -94,7 +94,7 @@ public class EditProfileActivity extends AppCompatActivity {
             authToken = "Bearer " + token;
         }
 
-        apiService.getUserPoints(authToken, userId).enqueue(new Callback<PointResponse>() {
+        apiService.getUserPoints(userId).enqueue(new Callback<PointResponse>() {
             @Override
             public void onResponse(Call<PointResponse> call, Response<PointResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
@@ -148,7 +148,7 @@ public class EditProfileActivity extends AppCompatActivity {
             authToken = "Bearer " + token;
         }
 
-        apiService.updateUserProfile(authToken, currentUser).enqueue(new Callback<User>() {
+        apiService.updateUserProfile(currentUser).enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
                 showLoading(false);

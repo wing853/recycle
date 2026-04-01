@@ -102,7 +102,7 @@ public class UnusedCouponFragment extends Fragment {
         Long userId = currentUser.getUserId();
         DevLog.d("UnusedCouponFragment", "Loading coupons for user ID: " + userId);
 
-        apiService.getUserCoupons(authToken, userId).enqueue(new Callback<Map<String, Object>>() {
+        apiService.getUserCoupons(userId).enqueue(new Callback<Map<String, Object>>() {
             @Override
             public void onResponse(Call<Map<String, Object>> call, Response<Map<String, Object>> response) {
                 if (response.isSuccessful() && response.body() != null) {

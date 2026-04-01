@@ -215,7 +215,7 @@ public class CouponUseActivity extends AppCompatActivity {
 
         DevLog.d(TAG, "Using coupon - ID: " + serverCouponId + ", Token: " + authToken);
 
-        apiService.useCoupon(authToken, (long)serverCouponId).enqueue(new Callback<Map<String, Object>>() {
+        apiService.useCoupon((long)serverCouponId).enqueue(new Callback<Map<String, Object>>() {
             @Override
             public void onResponse(Call<Map<String, Object>> call, Response<Map<String, Object>> response) {
                 DevLog.d(TAG, "API Response - Code: " + response.code());

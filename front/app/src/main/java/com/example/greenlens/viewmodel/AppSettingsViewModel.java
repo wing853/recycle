@@ -53,7 +53,7 @@ public class AppSettingsViewModel extends AndroidViewModel {
             authToken = "Bearer " + token;
         }
 
-        apiService.getAppSettings(authToken).enqueue(new Callback<AppSettings>() {
+        apiService.getAppSettings().enqueue(new Callback<AppSettings>() {
             @Override
             public void onResponse(Call<AppSettings> call, Response<AppSettings> response) {
                 loading.setValue(false);
@@ -81,7 +81,7 @@ public class AppSettingsViewModel extends AndroidViewModel {
             authToken = "Bearer " + token;
         }
 
-        apiService.updateAppSettings(authToken, newSettings).enqueue(new Callback<AppSettings>() {
+        apiService.updateAppSettings(newSettings).enqueue(new Callback<AppSettings>() {
             @Override
             public void onResponse(Call<AppSettings> call, Response<AppSettings> response) {
                 loading.setValue(false);

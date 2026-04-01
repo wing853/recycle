@@ -53,7 +53,7 @@ public class RankingViewModel extends ViewModel {
             authToken = "Bearer " + token;
         }
 
-        apiService.getLeaderboard(authToken).enqueue(new Callback<LeaderboardResponse>() {
+        apiService.getLeaderboard().enqueue(new Callback<LeaderboardResponse>() {
             @Override
             public void onResponse(Call<LeaderboardResponse> call, Response<LeaderboardResponse> response) {
                 isLoading.setValue(false);
