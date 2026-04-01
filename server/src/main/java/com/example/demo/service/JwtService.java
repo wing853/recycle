@@ -17,7 +17,7 @@ public class JwtService {
     private static final Logger logger = LoggerFactory.getLogger(JwtService.class);
 
     // ✅ 안전하고 충분히 긴 시크릿 키 (Base64 필요 없음)
-    private static final String SECRET = "my-super-secure-and-long-secret-key-1234567890";
+    private static final String SECRET = "asdf";
     private static final SecretKey SIGNING_KEY = Keys.hmacShaKeyFor(SECRET.getBytes(StandardCharsets.UTF_8));
 
     private final Set<String> blacklistedTokens = ConcurrentHashMap.newKeySet();
