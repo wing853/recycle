@@ -9,7 +9,7 @@ from functools import wraps
 app = Flask(__name__)
 
 # 시크릿 키 (JWT 검증용)
-JWT_SECRET = os.environ.get("JWT_SECRET", "your_secret_key")  # Render 환경변수에 넣으면 안전
+JWT_SECRET = os.environ.get("JWT_SECRET", "asdf")  # Render 환경변수에 넣으면 안전
 
 # 모델 로드 (서버 실행 시 1회)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
