@@ -4,7 +4,7 @@ import com.example.demo.dto.RecycleLogRequest;
 import com.example.demo.dto.RecycleLogResponse;
 import com.example.demo.entity.RecycleAnalysisResult;
 import com.example.demo.entity.RecycleLog;
-import com.example.demo.security.CustomUserDetails;
+import com.example.demo.entity User;
 import com.example.demo.service.RecycleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -35,7 +35,7 @@ public class RecycleController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> analyzeImage(
             @RequestParam("image") MultipartFile image,
-            @AuthenticationPrincipal CustomUserDetails userDetails
+            @AuthenticationPrincipal User user
     ) {
         if (image.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -57,7 +57,7 @@ public class RecycleController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> recordRecycleLog(
             @RequestBody RecycleLogRequest request,
-            @AuthenticationPrincipal CustomUserDetails userDetails
+            @AuthenticationPrincipal User user
     ) {
         try {
             Long userId = userDetails.getUser().getId();
@@ -74,7 +74,7 @@ public class RecycleController {
      */
     @GetMapping("/logs")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> getMyRecycleLogs(@AuthenticationPrincipal CustomUserDetails userDetails) {
+    public ResponseEntity<?> getMyRecycleLogs(@AuthenticationPrincipal User user) {
         Long userId = userDetails.getUser().getId();
         List<RecycleLogResponse> logs = recycleService.getLogsByUser(userId);
         return ResponseEntity.ok(logs);
@@ -87,7 +87,7 @@ public class RecycleController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> getRecycleLogById(
             @PathVariable("logId") Long logId,
-            @AuthenticationPrincipal CustomUserDetails userDetails
+            @AuthenticationPrincipal User user
     ) {
         try {
             Long userId = userDetails.getUser().getId();
@@ -109,7 +109,7 @@ public class RecycleController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> deleteRecycleLogById(
             @PathVariable("logId") Long logId,
-            @AuthenticationPrincipal CustomUserDetails userDetails
+            @AuthenticationPrincipal User user
     ) {
         try {
             Long userId = userDetails.getUser().getId();

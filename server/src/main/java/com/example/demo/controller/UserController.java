@@ -3,7 +3,6 @@ package com.example.demo.controller;
 import com.example.demo.dto.*;
 import com.example.demo.entity.Point;
 import com.example.demo.entity.User;
-import com.example.demo.security.CustomUserDetails;
 import com.example.demo.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -105,7 +104,7 @@ public class UserController {
 
     @GetMapping("/profile")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> getProfile(@AuthenticationPrincipal CustomUserDetails userDetails) {
+    public ResponseEntity<?> getProfile(@AuthenticationPrincipal User user) {
         User user = userDetails.getUser();
         Long userId = user.getId();
 
@@ -162,7 +161,7 @@ public class UserController {
 
     @GetMapping("/settings")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> getAppSettings(@AuthenticationPrincipal CustomUserDetails userDetails) {
+    public ResponseEntity<?> getAppSettings(@AuthenticationPrincipal User user) {
         Long userId = userDetails.getUser().getId();
         try {
             AppSettingsResponse response = userService.getAppSettings(userId);
@@ -177,7 +176,7 @@ public class UserController {
     @PutMapping("/settings")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> updateAppSettings(
-            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @AuthenticationPrincipal User user,
             @RequestBody AppSettingsUpdateRequest request) {
         Long userId = userDetails.getUser().getId();
         try {
@@ -192,7 +191,7 @@ public class UserController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<PointHistoryResponse>> getPointHistory(
             @PathVariable Long userId,
-            @AuthenticationPrincipal CustomUserDetails userDetails) {
+            @AuthenticationPrincipal User user) {
         if (!userDetails.getUser().getId().equals(userId)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
@@ -204,7 +203,7 @@ public class UserController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<UserCouponBoxResponse> getUserCoupons(
             @PathVariable Long userId,
-            @AuthenticationPrincipal CustomUserDetails userDetails) {
+            @AuthenticationPrincipal User user) {
         if (!userDetails.getUser().getId().equals(userId)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }

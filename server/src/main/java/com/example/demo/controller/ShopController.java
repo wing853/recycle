@@ -3,7 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.dto.PurchaseRequest;
 import com.example.demo.dto.PurchaseResponse;
 import com.example.demo.entity.Coupon;
-import com.example.demo.security.CustomUserDetails;
+import com.example.demo.entity User;
 import com.example.demo.service.CouponService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -34,7 +34,7 @@ public class ShopController {
     public ResponseEntity<PurchaseResponse> purchaseCoupon(
             @PathVariable Long couponId,
             @RequestBody(required = false) Map<String, Object> body, // ⭐️ body 없어도 허용
-            @AuthenticationPrincipal CustomUserDetails userDetails) {
+            @AuthenticationPrincipal User user) {
 
         Long userId = userDetails.getUser().getId();
         PurchaseResponse response = couponService.purchaseCoupon(userId, couponId);
@@ -46,7 +46,7 @@ public class ShopController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<PurchaseResponse> useCoupon(
             @PathVariable Long couponId,
-            @AuthenticationPrincipal CustomUserDetails userDetails) {
+            @AuthenticationPrincipal User user) {
 
         PurchaseResponse response = couponService.useCoupon(userDetails.getUser(), couponId);
         return ResponseEntity.ok(response);
