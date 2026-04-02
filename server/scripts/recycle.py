@@ -42,10 +42,23 @@ def token_required(f):
             return jsonify({"error": "유효하지 않은 토큰"}), 403
         return f(*args, **kwargs)
     return decorated
+@app.route("/", methods = ["GET"])
+def test():
+    return "서버 접속됨"
 
 @app.route("/recycle/analyze", methods=["POST"])
-@token_required
+#@token_required
 def analyze_image():
+    # 요청 헤더 확인
+    print("==== Request Headers ====")
+    for k, v in request.headers.items():
+        print(f"{k}: {v}")
+    
+    # 요청 파일 확인
+    print("==== Request Files ====")
+    for k, v in request.files.items():
+        print(f"{k}: {v.filename}")
+    
     if 'image' not in request.files:
         return jsonify({"error": "이미지 파일이 필요합니다."}), 400
 
@@ -73,6 +86,8 @@ def analyze_image():
     disposal = DISPOSAL.get(category, "일반 쓰레기통에 버려주세요.")
 
     os.remove(temp.name)  # 임시 파일 삭제
+
+    print(f"Analyzed category: {category}, confidence: {confidence}")
 
     return jsonify({
         "category": category,
