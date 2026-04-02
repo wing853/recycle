@@ -3,7 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.dto.PointHistoryResponse;
 import com.example.demo.dto.PointResponse;
 import com.example.demo.entity.Point;
-import com.example.demo.entity User;
+import com.example.demo.entity.User;
 import com.example.demo.service.PointHistoryService;
 import com.example.demo.service.PointService;
 import lombok.RequiredArgsConstructor;

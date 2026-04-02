@@ -4,7 +4,7 @@ import com.example.demo.dto.RecycleLogRequest;
 import com.example.demo.dto.RecycleLogResponse;
 import com.example.demo.entity.RecycleAnalysisResult;
 import com.example.demo.entity.RecycleLog;
-import com.example.demo.entity User;
+import com.example.demo.entity.User;
 import com.example.demo.service.RecycleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

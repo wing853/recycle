@@ -3,7 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.dto.PurchaseRequest;
 import com.example.demo.dto.PurchaseResponse;
 import com.example.demo.entity.Coupon;
-import com.example.demo.entity User;
+import com.example.demo.entity.User;
 import com.example.demo.service.CouponService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
