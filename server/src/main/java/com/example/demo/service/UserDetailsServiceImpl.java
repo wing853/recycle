@@ -28,6 +28,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             throw new UsernameNotFoundException("사용자를 찾을 수 없습니다: " + email);
         }
 
-        return new CustomUserDetails(users.get(0)); // 중복이 있어도 첫 사용자 기준으로 처리
+        return new users.get(0); // 중복이 있어도 첫 사용자 기준으로 처리
     }
 }
