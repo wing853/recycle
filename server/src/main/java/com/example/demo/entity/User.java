@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import jakarta.persistence.*;
 import java.util.Collection;
@@ -32,13 +33,13 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String password;
 
-    // ✅ 분리수거 로그 연관관계 추가
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RecycleLog> recycleLogs;
 
+    // 🔥 여기 수정
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(); // 권한 없음
+        return List.of(new SimpleGrantedAuthority("ROLE_USER"));
     }
 
     @Override
@@ -46,9 +47,10 @@ public class User implements UserDetails {
         return password;
     }
 
+    // Spring Security는 username을 ID처럼 사용 → 우리는 email 사용
     @Override
     public String getUsername() {
-        return username;
+        return email;
     }
 
     @Override
