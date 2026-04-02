@@ -24,7 +24,7 @@ COPY --from=builder /app/target/demo-0.0.1-SNAPSHOT.jar app.jar
 RUN apt-get update && apt-get install -y python3 python3-pip
 
 # Flask 코드 복사
-COPY server/ server/
+COPY ../server/ server/
 WORKDIR /app/server/scripts
 
 # Flask 의존성 설치
