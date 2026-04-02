@@ -1,27 +1,34 @@
-# OpenJDK 17 사용More actions
+# 1. Build Spring Boot
 FROM eclipse-temurin:17-jdk AS builder
-
-# 작업 디렉토리 설정
 WORKDIR /app
 
-# 프로젝트 파일 복사
-COPY . .
+# Spring Boot 소스만 복사
+COPY springboot/ springboot/
+WORKDIR /app/springboot
 
-# Maven Wrapper(mvnw) 실행 권한 추가
+# Maven 빌드
 RUN chmod +x mvnw
-
-# Maven을 사용하여 프로젝트 빌드
 RUN ./mvnw clean package -DskipTests
 
-# 최종 실행 환경 설정
+# 2. 최종 실행 환경
 FROM eclipse-temurin:17-jdk
 WORKDIR /app
 
-# 빌드된 JAR 파일 복사
-COPY --from=builder /app/target/demo-0.0.1-SNAPSHOT.jar app.jar
+# Spring Boot 빌드 JAR 복사
+COPY --from=builder /app/springboot/target/demo-0.0.1-SNAPSHOT.jar app.jar
 
-# 컨테이너에서 실행할 포트 노출
-EXPOSE 8080
+# Python 환경 설치
+RUN apt-get update && apt-get install -y python3 python3-pip
 
-# 실행 명령어
-CMD ["java", "-jar", "app.jar"]
+# Flask 코드 복사
+COPY server/ server/
+WORKDIR /app/server/scripts
+
+# Flask 의존성 설치
+RUN pip3 install flask
+
+# 포트 노출
+EXPOSE 8080 5000
+
+# 두 서버 동시에 실행 (개발용)
+CMD java -jar /app/app.jar & python3 recycle.py
