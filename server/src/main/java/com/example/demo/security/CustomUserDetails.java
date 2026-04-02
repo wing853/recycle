@@ -31,7 +31,7 @@ public class CustomUserDetails implements UserDetails {
     // 권한이 없다면 빈 리스트 반환
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.emptyList();
+        return List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole()));
     }
 
     @Override
