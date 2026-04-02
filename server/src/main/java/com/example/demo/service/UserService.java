@@ -12,7 +12,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
