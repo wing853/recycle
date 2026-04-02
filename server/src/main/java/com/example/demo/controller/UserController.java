@@ -105,7 +105,6 @@ public class UserController {
     @GetMapping("/profile")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> getProfile(@AuthenticationPrincipal User user) {
-        User user = userDetails.getUser();
         Long userId = user.getId();
 
         int points = recycleService.getUserPointInfo(userId).getPoints();
@@ -162,7 +161,7 @@ public class UserController {
     @GetMapping("/settings")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> getAppSettings(@AuthenticationPrincipal User user) {
-        Long userId = userDetails.getUser().getId();
+        Long userId = user.getId();
         try {
             AppSettingsResponse response = userService.getAppSettings(userId);
             return ResponseEntity.ok(response);
@@ -178,7 +177,7 @@ public class UserController {
     public ResponseEntity<?> updateAppSettings(
             @AuthenticationPrincipal User user,
             @RequestBody AppSettingsUpdateRequest request) {
-        Long userId = userDetails.getUser().getId();
+        Long userId = user.getId();
         try {
             AppSettingsUpdateResponse response = userService.updateAppSettings(userId, request);
             return ResponseEntity.ok(response);
@@ -192,7 +191,7 @@ public class UserController {
     public ResponseEntity<List<PointHistoryResponse>> getPointHistory(
             @PathVariable Long userId,
             @AuthenticationPrincipal User user) {
-        if (!userDetails.getUser().getId().equals(userId)) {
+        if (user.getId().equals(userId)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         List<PointHistoryResponse> history = pointHistoryService.getHistory(userId);
@@ -204,7 +203,7 @@ public class UserController {
     public ResponseEntity<UserCouponBoxResponse> getUserCoupons(
             @PathVariable Long userId,
             @AuthenticationPrincipal User user) {
-        if (!userDetails.getUser().getId().equals(userId)) {
+        if (!user.getId().equals(userId)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         UserCouponBoxResponse response = userCouponService.getUserCoupons(userId);

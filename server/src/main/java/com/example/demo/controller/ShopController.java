@@ -36,7 +36,7 @@ public class ShopController {
             @RequestBody(required = false) Map<String, Object> body, // ⭐️ body 없어도 허용
             @AuthenticationPrincipal User user) {
 
-        Long userId = userDetails.getUser().getId();
+        Long userId = user.getId();
         PurchaseResponse response = couponService.purchaseCoupon(userId, couponId);
         return ResponseEntity.ok(response);
     }
@@ -48,7 +48,7 @@ public class ShopController {
             @PathVariable Long couponId,
             @AuthenticationPrincipal User user) {
 
-        PurchaseResponse response = couponService.useCoupon(userDetails.getUser(), couponId);
+        PurchaseResponse response = couponService.useCoupon(user, couponId);
         return ResponseEntity.ok(response);
     }
 }

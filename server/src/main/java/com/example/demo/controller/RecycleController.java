@@ -112,7 +112,7 @@ public class RecycleController {
             @AuthenticationPrincipal User user
     ) {
         try {
-            Long userId = userDetails.getUser().getId();
+            Long userId = user.getId();
             recycleService.deleteLogById(logId, userId);
             return ResponseEntity.ok(Map.of("message", "로그가 삭제되었습니다."));
         } catch (IllegalArgumentException e) {

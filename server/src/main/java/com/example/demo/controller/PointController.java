@@ -26,7 +26,7 @@ public class PointController {
     @GetMapping("/me")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<PointResponse> getMyPoint(@AuthenticationPrincipal User user) {
-        Long userId = userDetails.getUser().getId();
+        Long userId = user.getId();
         Point point = pointService.getUserPointInfo(userId);
 
         PointResponse response = PointResponse.builder()
@@ -42,7 +42,7 @@ public class PointController {
     @GetMapping("/history")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<PointHistoryResponse>> getPointHistory(@AuthenticationPrincipal User user) {
-        Long userId = userDetails.getUser().getId();
+        Long userId = user.getId();
         List<PointHistoryResponse> history = pointHistoryService.getHistory(userId);
         return ResponseEntity.ok(history);
     }
