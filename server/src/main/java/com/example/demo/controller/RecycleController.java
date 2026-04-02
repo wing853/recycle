@@ -42,7 +42,7 @@ public class RecycleController {
                     .body(Map.of("message", "이미지 파일이 비어 있습니다."));
         }
 
-        Long userId = userDetails.getUser().getId();
+        Long userId = user.getId();
         Map<String, Object> result = recycleService.analyzeAndSave(image, userId);
 
         result.putIfAbsent("status", "processing");
@@ -60,7 +60,7 @@ public class RecycleController {
             @AuthenticationPrincipal User user
     ) {
         try {
-            Long userId = userDetails.getUser().getId();
+            Long userId = user.getId();
             RecycleLogResponse response = recycleService.saveLog(request, userId);
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
         } catch (IllegalArgumentException e) {
@@ -75,7 +75,7 @@ public class RecycleController {
     @GetMapping("/logs")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> getMyRecycleLogs(@AuthenticationPrincipal User user) {
-        Long userId = userDetails.getUser().getId();
+        Long userId = user.getId();
         List<RecycleLogResponse> logs = recycleService.getLogsByUser(userId);
         return ResponseEntity.ok(logs);
     }
@@ -90,7 +90,7 @@ public class RecycleController {
             @AuthenticationPrincipal User user
     ) {
         try {
-            Long userId = userDetails.getUser().getId();
+            Long userId = user.getId();
             RecycleLog log = recycleService.getLogById(logId, userId);
             return ResponseEntity.ok(log);
         } catch (IllegalArgumentException e) {
