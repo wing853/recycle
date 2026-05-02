@@ -14,6 +14,7 @@ import java.util.concurrent.TimeUnit;
 
 public class ApiClient {
     private static final String BASE_URL = "https://recycle-8z8j.onrender.com";
+
     private static ApiClient instance;
     private final ApiService apiService;
 
