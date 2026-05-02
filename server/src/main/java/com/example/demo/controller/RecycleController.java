@@ -54,7 +54,7 @@ public class RecycleController {
      * 수기로 기록, 주로 테스트 용용
      */
     @PostMapping("/log")
-    @PreAuthorize("isAuthenticated()")
+    //@PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> recordRecycleLog(
             @RequestBody RecycleLogRequest request,
             @AuthenticationPrincipal User user
