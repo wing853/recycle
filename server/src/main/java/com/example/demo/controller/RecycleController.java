@@ -32,7 +32,7 @@ public class RecycleController {
      * ✅ 이미지 분석 요청 API (포인트 자동 지급 포함)
      */
     @PostMapping("/analyze")
-    @PreAuthorize("isAuthenticated()")
+    //@PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> analyzeImage(
             @RequestParam("image") MultipartFile image,
             @AuthenticationPrincipal User user
@@ -54,7 +54,7 @@ public class RecycleController {
      * 수기로 기록, 주로 테스트 용용
      */
     @PostMapping("/log")
-    //@PreAuthorize("isAuthenticated()")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> recordRecycleLog(
             @RequestBody RecycleLogRequest request,
             @AuthenticationPrincipal User user
