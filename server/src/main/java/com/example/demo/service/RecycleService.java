@@ -27,20 +27,16 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.http.*;
 
 import java.util.Map;
-
 import java.time.ZonedDateTime;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.Normalizer;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
 @RequiredArgsConstructor
@@ -53,10 +49,16 @@ public class RecycleService {
     private final PointRepository pointRepository;
     private final PointHistoryRepository pointHistoryRepository;
     private final UserRepository userRepository;
-    // private static final int DAILY_POINT_LIMIT = 50;
-    // private static final int DAILY_ANALYSIS_LIMIT = 5;
-    // private static final int ANALYSIS_REWARD = 10;
 
+    // ✅ Render AI 서버 URL
+    @Value("${ai.api.url}")
+    private String aiApiUrl;
+
+    // ✅ 이미지 임시 저장 경로
+    @Value("${app.upload-dir}")
+    private String uploadDir;
+
+    private final RestTemplate restTemplate = new RestTemplate();
 
     @Transactional
     public RecycleLogResponse saveLog(RecycleLogRequest request, Long userId) {
@@ -71,19 +73,16 @@ public class RecycleService {
 
         RecycleLog saved = recycleLogRepository.save(log);
 
-        // 포인트 지급 로직
-        int pointsEarned = 100;  // 또는 일일 제한/분석 횟수 체크 후 결정
+        int pointsEarned = 100;
 
-        // 기존 포인트 조회 or 새로 생성
         Point point = pointRepository.findByUserId(userId)
-            .orElseGet(() -> {
-                Point p = new Point();
-                p.setUser(user);
-                p.setPoints(0);
-                return p;
-            });
+                .orElseGet(() -> {
+                    Point p = new Point();
+                    p.setUser(user);
+                    p.setPoints(0);
+                    return p;
+                });
 
-        // 포인트 누적 지급
         point.setPoints(point.getPoints() + pointsEarned);
         point.setUpdatedAt(ZonedDateTime.now());
         pointRepository.save(point);
@@ -101,11 +100,11 @@ public class RecycleService {
         long recycleCount = recycleLogRepository.countByUserId(userId);
 
         return RecycleLogResponse.builder()
-            .logId(saved.getId())
-            .totalPoints(point.getPoints())
-            .recycleCount(recycleCount)
-            .message(request.getDisposalCategory() + " 분리수거가 기록되었습니다.")
-            .build();
+                .logId(saved.getId())
+                .totalPoints(point.getPoints())
+                .recycleCount(recycleCount)
+                .message(request.getDisposalCategory() + " 분리수거가 기록되었습니다.")
+                .build();
     }
 
     public int getUserRank(Long userId) {
@@ -154,29 +153,13 @@ public class RecycleService {
         recycleAnalysisResultRepository.save(result);
     }
 
-    @Value("${app.upload-dir}")
-    private String uploadDir;
-
-    @Value("${script.python-exe}")
-    private String pythonExe;
-
-    @Value("${script.path}")
-    private String scriptPath;
-
-    @Value("${script.weight}")
-    private String weightPath;
-
-    private final RestTemplate restTemplate = new RestTemplate();
-    @Value("${ai.api.url}")
-    private String aiApiUrl;
-
     @Transactional
     public Map<String, Object> analyzeAndSave(MultipartFile image, Long userId) {
         Map<String, Object> resultInfo = new HashMap<>();
         try {
-            Long analysisId = System.currentTimeMillis();  // millisecond 단위 ID
+            Long analysisId = System.currentTimeMillis();
 
-            // 1️⃣ 이미지 저장
+            // 1️⃣ 이미지 저장 (AI 서버로 보내기 전 임시 저장)
             Path uploadPath = Paths.get(uploadDir).toAbsolutePath().normalize();
             Files.createDirectories(uploadPath);
 
@@ -188,7 +171,7 @@ public class RecycleService {
             Path target = uploadPath.resolve(fileName);
             image.transferTo(target);
 
-            // 2️⃣ Python API 호출
+            // 2️⃣ Render AI API 호출
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 
@@ -196,10 +179,14 @@ public class RecycleService {
             body.add("image", new FileSystemResource(target.toFile()));
 
             HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
+
+            log.info("AI 서버로 분석 요청 송신: {}", aiApiUrl);
             ResponseEntity<Map> response = restTemplate.postForEntity(aiApiUrl, requestEntity, Map.class);
 
             // 3️⃣ 결과 파싱
             Map<String, Object> resultMap = response.getBody();
+            if (resultMap == null) throw new RuntimeException("AI 서버로부터 응답을 받지 못했습니다.");
+
             String category = (String) resultMap.getOrDefault("category", "unknown");
             double confidence = Double.parseDouble(resultMap.getOrDefault("confidence", 0.0).toString());
             String disposalMethod = (String) resultMap.getOrDefault("disposal_method", "일반 쓰레기통에 버려주세요.");
@@ -279,63 +266,42 @@ public class RecycleService {
             recycleLog.setCreatedAt(ZonedDateTime.now());
             recycleLogRepository.save(recycleLog);
 
+            // 분석 후 임시 파일 삭제
+            Files.deleteIfExists(target);
+
         } catch (IOException e) {
-            log.error("이미지 처리 중 IOException 발생: {}", e.getMessage(), e);
+            log.error("이미지 처리 중 에러: {}", e.getMessage());
             throw new RuntimeException("이미지 처리 중 오류 발생", e);
+        } catch (Exception e) {
+            log.error("AI 분석 중 에러: {}", e.getMessage());
+            throw new RuntimeException("AI 분석 서비스 호출 중 오류 발생", e);
         }
 
         return resultInfo;
     }
 
-    // private String runPythonScript(String imgPath) {
-    //     ProcessBuilder pb = new ProcessBuilder(
-    //             pythonExe,
-    //             scriptPath,
-    //             "--image", imgPath
-    //     );
-    //     pb.redirectErrorStream(true);
-
-    //     try {
-    //         Process proc = pb.start();
-    //         String output;
-    //         try (BufferedReader br = new BufferedReader(
-    //                 new InputStreamReader(proc.getInputStream(), StandardCharsets.UTF_8))) {
-    //             output = br.lines().collect(Collectors.joining("\n"));
-    //         }
-    //         int exit = proc.waitFor();
-    //         log.info("PYTHON exit={} cmd={}", exit, pb.command());
-
-    //         if (exit != 0) {
-    //             return "error: script failed with exit code " + exit + "\n" + output;
-    //         }
-    //         return output;
-    //     } catch (IOException | InterruptedException e) {
-    //         return "error:" + e.getMessage();
-    //     }
-    // }
-
     public List<RecycleLogResponse> getLogsByUser(Long userId) {
-    List<RecycleLog> logs = recycleLogRepository.findByUserId(userId);
+        List<RecycleLog> logs = recycleLogRepository.findByUserId(userId);
 
-    long recycleCount = recycleLogRepository.countByUserId(userId);
-    long totalPoints = pointRepository.findByUserId(userId)
-        .map(Point::getPoints)
-        .orElse(0);
+        long recycleCount = recycleLogRepository.countByUserId(userId);
+        long totalPoints = pointRepository.findByUserId(userId)
+                .map(Point::getPoints)
+                .orElse(0);
 
-    return logs.stream()
-            .map(log -> RecycleLogResponse.builder()
-                    .logId(log.getId())
-                    .analysisId(log.getAnalysisId())
-                    .category(log.getCategory())
-                    .disposalCategory(log.getDisposalCategory())
-                    .disposalMethod(log.getDisposalMethod())
-                    .createdAt(log.getCreatedAt())
-                    .recycleCount(recycleCount)
-                    .totalPoints(totalPoints) 
-                    .message(log.getDisposalCategory() + " 분리수거가 기록되었습니다.")
-                    .build()
-            )
-            .collect(Collectors.toList());
+        return logs.stream()
+                .map(log -> RecycleLogResponse.builder()
+                        .logId(log.getId())
+                        .analysisId(log.getAnalysisId())
+                        .category(log.getCategory())
+                        .disposalCategory(log.getDisposalCategory())
+                        .disposalMethod(log.getDisposalMethod())
+                        .createdAt(log.getCreatedAt())
+                        .recycleCount(recycleCount)
+                        .totalPoints(totalPoints)
+                        .message(log.getDisposalCategory() + " 분리수거가 기록되었습니다.")
+                        .build()
+                )
+                .collect(Collectors.toList());
     }
 
     public Point getUserPointInfo(Long userId) {
