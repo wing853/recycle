@@ -50,9 +50,13 @@ public class RecycleService {
     private final PointHistoryRepository pointHistoryRepository;
     private final UserRepository userRepository;
 
+
     // ✅ Render AI 서버 URL
     @Value("${ai.api.url}")
     private String aiApiUrl;
+
+    @Value("${gemini.api.key}")
+    private String geminiApiKey;
 
     // ✅ 이미지 임시 저장 경로
     @Value("${app.upload-dir}")
@@ -191,6 +195,65 @@ public class RecycleService {
             double confidence = Double.parseDouble(resultMap.getOrDefault("confidence", 0.0).toString());
             String disposalMethod = (String) resultMap.getOrDefault("disposal_method", "일반 쓰레기통에 버려주세요.");
 
+            // ✅ Gemini Vision fallback (confidence 0.85 미만일 때)
+            if (confidence < 0.85) {
+                log.info("YOLO 신뢰도 낮음 ({}) → Gemini Vision으로 재판별", confidence);
+                try {
+                    byte[] imageBytes = Files.readAllBytes(target);
+                    String base64Image = java.util.Base64.getEncoder().encodeToString(imageBytes);
+
+                    String prompt = """
+                        이 이미지는 분리수거 대상 물체입니다.
+                        다음 항목을 JSON 형식으로만 답변해주세요. 다른 말은 하지 마세요.
+                        {
+                          "category": "물체 종류 (예: 페트병, 유리병, 캔, 종이, 일반쓰레기 등)",
+                          "disposal_method": "구체적인 분리수거 방법"
+                        }
+                        """;
+
+                    HttpHeaders geminiHeaders = new HttpHeaders();
+                    geminiHeaders.setContentType(MediaType.APPLICATION_JSON);
+
+                    Map<String, Object> geminiBody = new HashMap<>();
+                    geminiBody.put("contents", List.of(
+                            Map.of("parts", List.of(
+                                    Map.of(
+                                            "inline_data", Map.of(
+                                                    "mime_type", "image/jpeg",
+                                                    "data", base64Image
+                                            )
+                                    ),
+                                    Map.of("text", prompt)
+                            ))
+                    ));
+
+                    HttpEntity<Map<String, Object>> geminiRequest = new HttpEntity<>(geminiBody, geminiHeaders);
+
+                    String geminiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + geminiApiKey;
+                    ResponseEntity<Map> geminiResponse = restTemplate.postForEntity(geminiUrl, geminiRequest, Map.class);
+
+                    // 응답 파싱
+                    Map<String, Object> geminiResult = geminiResponse.getBody();
+                    List<Map<String, Object>> candidates = (List<Map<String, Object>>) geminiResult.get("candidates");
+                    Map<String, Object> contentMap = (Map<String, Object>) candidates.get(0).get("content");
+                    List<Map<String, Object>> parts = (List<Map<String, Object>>) contentMap.get("parts");
+                    String geminiText = (String) parts.get(0).get("text");
+
+                    // JSON 파싱 (```json 블록 제거)
+                    geminiText = geminiText.replaceAll("```json", "").replaceAll("```", "").trim();
+
+                    com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
+                    Map<String, String> parsedResult = mapper.readValue(geminiText, Map.class);
+
+                    category = parsedResult.getOrDefault("category", category);
+                    disposalMethod = parsedResult.getOrDefault("disposal_method", disposalMethod);
+                    log.info("Gemini Vision 재판별 완료 → category: {}", category);
+
+                } catch (Exception e) {
+                    log.warn("Gemini Vision 호출 실패, YOLO 결과 유지: {}", e.getMessage());
+                }
+            }
+
             // 4️⃣ 분석 결과 저장
             RecycleAnalysisResult result = new RecycleAnalysisResult();
             result.setAnalysisId(analysisId);
@@ -248,10 +311,10 @@ public class RecycleService {
                 resultInfo.put("points_rewarded", 0);
                 resultInfo.put("message", "하루 보상 한도를 초과하여 포인트가 지급되지 않았습니다.");
             }
+
             resultInfo.put("category", category);
             resultInfo.put("confidence", confidence);
             resultInfo.put("disposal_method", disposalMethod);
-
             resultInfo.put("remaining_reward_count", Math.max(0, DAILY_ANALYSIS_LIMIT - todayAiCount.intValue()));
             resultInfo.put("analysis_id", analysisId);
             resultInfo.put("created_at", ZonedDateTime.now().toString());
@@ -266,7 +329,7 @@ public class RecycleService {
             recycleLog.setCreatedAt(ZonedDateTime.now());
             recycleLogRepository.save(recycleLog);
 
-            // 분석 후 임시 파일 삭제
+            // 임시 파일 삭제
             Files.deleteIfExists(target);
 
         } catch (IOException e) {
