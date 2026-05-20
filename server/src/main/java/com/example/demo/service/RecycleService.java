@@ -229,7 +229,7 @@ public class RecycleService {
 
                     HttpEntity<Map<String, Object>> geminiRequest = new HttpEntity<>(geminiBody, geminiHeaders);
 
-                    String geminiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + geminiApiKey;
+                    String geminiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=" + geminiApiKey;
                     ResponseEntity<Map> geminiResponse = restTemplate.postForEntity(geminiUrl, geminiRequest, Map.class);
 
                     // 응답 파싱
