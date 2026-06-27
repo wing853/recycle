@@ -55,7 +55,7 @@ public class RecycleGuideFragment extends Fragment {
                 break;
             case "pet":
             case "plastic":
-                title = "플라스틱 용기류";
+                title = "플라스틱 용기 및 페트병류";
                 layoutResId = R.layout.fragment_plastic_recycle;
                 break;
             case "vinyl":
