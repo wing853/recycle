@@ -53,6 +53,7 @@ public class RecycleGuideFragment extends Fragment {
                 title = "종이류";
                 layoutResId = R.layout.fragment_paper_recycle;
                 break;
+            case "pet":
             case "plastic":
                 title = "플라스틱 용기류";
                 layoutResId = R.layout.fragment_plastic_recycle;
