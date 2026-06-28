@@ -191,7 +191,7 @@ public class UserController {
     public ResponseEntity<List<PointHistoryResponse>> getPointHistory(
             @PathVariable Long userId,
             @AuthenticationPrincipal User user) {
-        if (user.getId().equals(userId)) {
+        if (!user.getId().equals(userId)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         List<PointHistoryResponse> history = pointHistoryService.getHistory(userId);

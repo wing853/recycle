@@ -10,9 +10,6 @@ import com.example.greenlens.manager.UserManager;
 import com.example.greenlens.model.Point;
 import com.example.greenlens.util.DevLog;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -71,28 +68,17 @@ public class PointHistoryViewModel extends ViewModel {
                     List<Map<String, Object>> history = response.body();
                     DevLog.d(TAG, "포인트 내역 응답 성공: " + history.size() + "개 항목");
 
-                    // 적립(type=="적립")이면서 brandName==null인 항목은 제외
-                    List<Map<String, Object>> filteredHistory = new ArrayList<>();
-                    for (Map<String, Object> item : history) {
-                        String type = (String) item.get("type");
-                        String brandName = (String) item.get("brandName");
-                        if ("적립".equals(type) && brandName == null) {
-                            continue;
-                        }
-                        filteredHistory.add(item);
-                    }
-
                     // 날짜 기준 최신순(내림차순) 정렬
-                    filteredHistory.sort((a, b) -> {
+                    history.sort((a, b) -> {
                         String dateA = (String) a.get("date");
                         String dateB = (String) b.get("date");
                         if (dateA == null) return 1;
                         if (dateB == null) return -1;
-                        return dateB.compareTo(dateA); // 내림차순
+                        return dateB.compareTo(dateA);
                     });
 
-                    pointHistory.setValue(filteredHistory);
-                    DevLog.d(TAG, "포인트 내역 " + filteredHistory.size() + "개 로드 완료");
+                    pointHistory.setValue(history);
+                    DevLog.d(TAG, "포인트 내역 " + history.size() + "개 로드 완료");
                 } else {
                     error.setValue("포인트 내역을 불러올 수 없습니다.");
                     DevLog.e(TAG, "포인트 내역 조회 실패: " + response.code());

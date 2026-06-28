@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GreenLens 프로젝트 정리</title>
+  <style>
+    :root {
+      --green: #2e7d32;
+      --green-light: #4caf50;
+      --green-bg: #e8f5e9;
+      --blue: #1565c0;
+      --blue-bg: #e3f2fd;
+      --orange: #e65100;
+      --orange-bg: #fff3e0;
+      --purple: #6a1b9a;
+      --purple-bg: #f3e5f5;
+      --gray: #37474f;
+      --gray-light: #f5f5f5;
+      --border: #ddd;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', 'Apple SD Gothic Neo', sans-serif;
+      background: #fafafa;
+      color: #333;
+      line-height: 1.7;
+    }
+
+    /* ── 헤더 ── */
+    header {
+      background: linear-gradient(135deg, #1b5e20 0%, #388e3c 100%);
+      color: white;
+      padding: 48px 40px 36px;
+    }
+    header h1 { font-size: 2.2rem; font-weight: 700; }
+    header p  { font-size: 1rem; opacity: .85; margin-top: 8px; }
+    .tag-row { margin-top: 16px; display: flex; gap: 8px; flex-wrap: wrap; }
+    .tag {
+      background: rgba(255,255,255,.18);
+      border: 1px solid rgba(255,255,255,.35);
+      border-radius: 20px;
+      padding: 3px 14px;
+      font-size: .8rem;
+    }
+
+    /* ── 레이아웃 ── */
+    .container { max-width: 1100px; margin: 0 auto; padding: 40px 24px; }
+
+    /* ── 섹션 타이틀 ── */
+    .section { margin-bottom: 48px; }
+    .section-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--green);
+      border-left: 5px solid var(--green-light);
+      padding-left: 14px;
+      margin-bottom: 20px;
+    }
+    .sub-title {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--gray);
+      margin: 24px 0 10px;
+    }
+
+    /* ── 카드 ── */
+    .card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 22px 26px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 4px rgba(0,0,0,.06);
+    }
+    .card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 8px; }
+
+    /* ── 그리드 ── */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 680px) { .grid-2 { grid-template-columns: 1fr; } }
+
+    /* ── 배지 ── */
+    .badge {
+      display: inline-block;
+      border-radius: 4px;
+      padding: 2px 8px;
+      font-size: .75rem;
+      font-weight: 700;
+      margin-right: 6px;
+    }
+    .badge-get    { background: #bbdefb; color: #0d47a1; }
+    .badge-post   { background: #c8e6c9; color: #1b5e20; }
+    .badge-put    { background: #fff9c4; color: #f57f17; }
+    .badge-delete { background: #ffcdd2; color: #b71c1c; }
+    .badge-server { background: var(--blue-bg); color: var(--blue); }
+    .badge-client { background: var(--green-bg); color: var(--green); }
+
+    /* ── 코드 블록 ── */
+    pre {
+      background: #1e1e1e;
+      color: #d4d4d4;
+      border-radius: 8px;
+      padding: 18px 20px;
+      font-size: .82rem;
+      overflow-x: auto;
+      margin: 10px 0;
+      line-height: 1.6;
+    }
+    .kw  { color: #569cd6; }
+    .str { color: #ce9178; }
+    .cmt { color: #6a9955; }
+    .ann { color: #dcdcaa; }
+    .cls { color: #4ec9b0; }
+
+    /* ── 플로우 다이어그램 ── */
+    .flow {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0;
+      margin: 14px 0;
+    }
+    .flow-step {
+      background: var(--green-bg);
+      border: 1px solid #a5d6a7;
+      border-radius: 8px;
+      padding: 8px 14px;
+      font-size: .85rem;
+      font-weight: 600;
+      color: var(--green);
+      white-space: nowrap;
+    }
+    .flow-arrow {
+      color: #aaa;
+      font-size: 1.2rem;
+      padding: 0 6px;
+    }
+    .flow-step.server { background: var(--blue-bg); border-color: #90caf9; color: var(--blue); }
+    .flow-step.warn   { background: var(--orange-bg); border-color: #ffcc80; color: var(--orange); }
+
+    /* ── 테이블 ── */
+    table { width: 100%; border-collapse: collapse; font-size: .88rem; }
+    th {
+      background: var(--gray-light);
+      padding: 10px 14px;
+      text-align: left;
+      font-weight: 700;
+      border: 1px solid var(--border);
+    }
+    td {
+      padding: 9px 14px;
+      border: 1px solid var(--border);
+      vertical-align: top;
+    }
+    tr:nth-child(even) td { background: #fafafa; }
+
+    /* ── 파일 트리 ── */
+    .tree {
+      background: #1e1e1e;
+      color: #d4d4d4;
+      border-radius: 8px;
+      padding: 18px 22px;
+      font-size: .82rem;
+      font-family: 'Consolas', monospace;
+      line-height: 2;
+    }
+    .tree .dir  { color: #9cdcfe; }
+    .tree .file { color: #d4d4d4; }
+    .tree .note { color: #6a9955; font-style: italic; }
+
+    /* ── 알림 박스 ── */
+    .alert {
+      border-left: 4px solid;
+      border-radius: 6px;
+      padding: 12px 18px;
+      margin: 12px 0;
+      font-size: .88rem;
+    }
+    .alert-fix   { border-color: #f44336; background: #ffebee; color: #b71c1c; }
+    .alert-info  { border-color: #2196f3; background: #e3f2fd; color: #0d47a1; }
+    .alert-ok    { border-color: #4caf50; background: #e8f5e9; color: #1b5e20; }
+
+    /* ── 포인트 규칙 ── */
+    .rule-box {
+      background: var(--purple-bg);
+      border: 1px solid #ce93d8;
+      border-radius: 8px;
+      padding: 14px 18px;
+      font-size: .88rem;
+      color: var(--purple);
+    }
+    .rule-box strong { display: block; font-size: 1rem; margin-bottom: 6px; }
+
+    footer {
+      text-align: center;
+      padding: 32px;
+      font-size: .8rem;
+      color: #999;
+      border-top: 1px solid var(--border);
+      margin-top: 40px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>♻️ GreenLens 프로젝트 정리</h1>
+  <p>AI 기반 분리수거 인식 앱 — 서버 &amp; 안드로이드 클라이언트 전체 구조 문서</p>
+  <div class="tag-row">
+    <span class="tag">Spring Boot 3.4.4</span>
+    <span class="tag">Android (minSdk 24)</span>
+    <span class="tag">YOLOv5</span>
+    <span class="tag">Gemini 2.0 Flash</span>
+    <span class="tag">MySQL (Aiven)</span>
+    <span class="tag">JWT 인증</span>
+    <span class="tag">Retrofit2</span>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- ① 프로젝트 개요 -->
+  <div class="section">
+    <h2 class="section-title">① 프로젝트 개요</h2>
+    <div class="card">
+      <p>
+        <strong>GreenLens</strong>는 카메라로 재활용 물품을 촬영하면 AI가 자동으로 분류하고,
+        포인트를 지급하는 환경 앱입니다.
+        <br>백엔드는 <strong>Spring Boot</strong>로 구성되고, 프론트는 <strong>Android(Java)</strong>로 작성되었습니다.
+      </p>
+    </div>
+    <h3 class="sub-title">전체 아키텍처</h3>
+    <div class="flow">
+      <div class="flow-step">📱 Android 앱</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step server">🖥 Spring Boot 서버<br><small>Render 배포</small></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step server">🤖 YOLOv5 AI 서버<br><small>aiserver-1-cpjb.onrender.com</small></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step server">✨ Gemini 2.0 Flash<br><small>Google API (fallback)</small></div>
+    </div>
+    <div class="flow" style="margin-top:8px">
+      <div class="flow-step server">🖥 Spring Boot 서버</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step server">🗄 MySQL DB<br><small>Aiven Cloud</small></div>
+    </div>
+  </div>
+
+  <!-- ② 폴더 구조 -->
+  <div class="section">
+    <h2 class="section-title">② 폴더 구조</h2>
+    <div class="grid-2">
+      <div>
+        <h3 class="sub-title">🖥 서버 (server/)</h3>
+        <div class="tree">
+<span class="dir">server/src/main/java/com/example/demo/</span>
+├── <span class="dir">config/</span>         <span class="note"># JWT·CORS·Security 설정</span>
+├── <span class="dir">controller/</span>
+│   ├── <span class="file">RecycleController</span>   <span class="note"># 이미지 분석 API</span>
+│   ├── <span class="file">UserController</span>      <span class="note"># 로그인·회원가입</span>
+│   ├── <span class="file">PointController</span>     <span class="note"># 포인트 조회·사용</span>
+│   ├── <span class="file">RankingController</span>   <span class="note"># 랭킹 리더보드</span>
+│   └── <span class="file">ShopController</span>      <span class="note"># 쿠폰</span>
+├── <span class="dir">service/</span>
+│   ├── <span class="file">RecycleService</span>      <span class="note"># AI 분석 + 포인트 로직</span>
+│   └── <span class="file">RankingService</span>      <span class="note"># 랭킹 집계</span>
+├── <span class="dir">entity/</span>             <span class="note"># JPA 엔티티</span>
+├── <span class="dir">repository/</span>         <span class="note"># Spring Data JPA</span>
+├── <span class="dir">dto/</span>                <span class="note"># 요청/응답 DTO</span>
+└── <span class="dir">security/</span>           <span class="note"># JWT 필터</span>
+        </div>
+      </div>
+      <div>
+        <h3 class="sub-title">📱 앱 (front/)</h3>
+        <div class="tree">
+<span class="dir">front/app/src/main/java/com/example/greenlens/</span>
+├── <span class="dir">api/</span>
+│   ├── <span class="file">ApiClient</span>       <span class="note"># Retrofit 인스턴스</span>
+│   └── <span class="file">ApiService</span>      <span class="note"># API 인터페이스</span>
+├── <span class="dir">view/</span>
+│   ├── <span class="file">CameraActivity</span>  <span class="note"># 촬영 + 분석</span>
+│   ├── <span class="file">MainActivity</span>    <span class="note"># BottomNav 컨테이너</span>
+│   └── <span class="dir">fragment/</span>
+│       ├── <span class="file">HomeFragment</span>
+│       ├── <span class="file">RankingFragment</span>
+│       ├── <span class="file">ResultBottomSheetDialog</span>
+│       └── <span class="file">RecycleGuideFragment</span>
+├── <span class="dir">viewmodel/</span>
+│   ├── <span class="file">RankingViewModel</span>
+│   └── <span class="file">PointViewModel</span>
+├── <span class="dir">model/</span>
+│   └── <span class="dir">response/</span>       <span class="note"># API 응답 모델</span>
+└── <span class="dir">manager/</span>
+    └── <span class="file">UserManager</span>     <span class="note"># 토큰·세션 관리</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ③ 데이터베이스 구조 -->
+  <div class="section">
+    <h2 class="section-title">③ 데이터베이스 테이블</h2>
+    <table>
+      <tr>
+        <th>테이블</th>
+        <th>주요 컬럼</th>
+        <th>역할</th>
+      </tr>
+      <tr>
+        <td><code>users</code></td>
+        <td>id, username, email, password, roles</td>
+        <td>회원 정보</td>
+      </tr>
+      <tr>
+        <td><code>recycle_analysis_result</code></td>
+        <td>id, analysis_id, category, confidence, disposal_method, created_at</td>
+        <td>AI 분석 결과 저장</td>
+      </tr>
+      <tr>
+        <td><code>recycle_log</code></td>
+        <td>id, user_id, analysis_id, category, disposal_category, disposal_method, created_at</td>
+        <td>분리수거 활동 기록 (랭킹 집계 기준)</td>
+      </tr>
+      <tr>
+        <td><code>points</code></td>
+        <td>id, user_id(1:1), points, updated_at</td>
+        <td>현재 보유 포인트</td>
+      </tr>
+      <tr>
+        <td><code>point_history</code></td>
+        <td>id, user_id, date, type(적립/사용), reason, points, balance, wasteTypeKorean</td>
+        <td>포인트 이력</td>
+      </tr>
+      <tr>
+        <td><code>coupons</code></td>
+        <td>id, brandName, productName, points, category, imageUrl, expireDays</td>
+        <td>쿠폰 목록</td>
+      </tr>
+      <tr>
+        <td><code>user_coupon</code></td>
+        <td>id, user_id, coupon_id, purchase_date, expiration_date, is_used</td>
+        <td>유저가 구매한 쿠폰</td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- ④ API 엔드포인트 -->
+  <div class="section">
+    <h2 class="section-title">④ API 엔드포인트 전체 목록</h2>
+    <p style="font-size:.85rem;color:#666;margin-bottom:12px">
+      ※ 로그인·회원가입 외 모든 요청에 <code>Authorization: Bearer {JWT토큰}</code> 헤더 필요
+    </p>
+    <table>
+      <tr>
+        <th>메서드</th>
+        <th>경로</th>
+        <th>설명</th>
+      </tr>
+      <!-- 인증 -->
+      <tr><td colspan="3" style="background:#f0f0f0;font-weight:700">👤 사용자 인증</td></tr>
+      <tr>
+        <td><span class="badge badge-post">POST</span></td>
+        <td><code>/users/signup</code></td>
+        <td>회원가입</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-post">POST</span></td>
+        <td><code>/users/login</code></td>
+        <td>로그인 → JWT 토큰 반환</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-get">GET</span></td>
+        <td><code>/users/profile</code></td>
+        <td>내 정보 조회 (JWT 기반)</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-put">PUT</span></td>
+        <td><code>/users/profile</code></td>
+        <td>내 정보 수정</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-delete">DELETE</span></td>
+        <td><code>/users/profile</code></td>
+        <td>회원 탈퇴</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-post">POST</span></td>
+        <td><code>/users/logout</code></td>
+        <td>로그아웃</td>
+      </tr>
+      <!-- 이미지 분석 -->
+      <tr><td colspan="3" style="background:#f0f0f0;font-weight:700">📷 이미지 분석</td></tr>
+      <tr>
+        <td><span class="badge badge-post">POST</span></td>
+        <td><code>/recycle/analyze</code></td>
+        <td>이미지 업로드 → AI 분류 + 포인트 지급<br><small>multipart/form-data, 파라미터: image</small></td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-get">GET</span></td>
+        <td><code>/recycle/result/{analysis_id}</code></td>
+        <td>분석 결과 조회 (fallback용)</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-get">GET</span></td>
+        <td><code>/recycle/logs</code></td>
+        <td>내 분리수거 기록 전체 조회</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-delete">DELETE</span></td>
+        <td><code>/recycle/log/{logId}</code></td>
+        <td>분리수거 기록 삭제</td>
+      </tr>
+      <!-- 포인트 -->
+      <tr><td colspan="3" style="background:#f0f0f0;font-weight:700">💰 포인트</td></tr>
+      <tr>
+        <td><span class="badge badge-get">GET</span></td>
+        <td><code>/users/{user_id}/points</code></td>
+        <td>현재 포인트 조회</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-post">POST</span></td>
+        <td><code>/users/{user_id}/points/use</code></td>
+        <td>포인트 사용 (쿠폰 구매 등)</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-get">GET</span></td>
+        <td><code>/users/{user_id}/points/history</code></td>
+        <td>포인트 이력 조회</td>
+      </tr>
+      <!-- 랭킹 -->
+      <tr><td colspan="3" style="background:#f0f0f0;font-weight:700">🏆 랭킹</td></tr>
+      <tr>
+        <td><span class="badge badge-get">GET</span></td>
+        <td><code>/ranking/leaderboard</code></td>
+        <td>전체 랭킹 리더보드 (분리수거 횟수 기준)</td>
+      </tr>
+      <!-- 쿠폰 -->
+      <tr><td colspan="3" style="background:#f0f0f0;font-weight:700">🎟 쿠폰</td></tr>
+      <tr>
+        <td><span class="badge badge-get">GET</span></td>
+        <td><code>/coupons</code></td>
+        <td>전체 쿠폰 목록</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-post">POST</span></td>
+        <td><code>/shop/coupons/{coupon_id}/purchase</code></td>
+        <td>쿠폰 구매</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-post">POST</span></td>
+        <td><code>/shop/coupons/{couponId}/use</code></td>
+        <td>쿠폰 사용</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-get">GET</span></td>
+        <td><code>/users/{user_id}/coupons</code></td>
+        <td>내가 가진 쿠폰 목록</td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- ⑤ 핵심 흐름: 이미지 분석 -->
+  <div class="section">
+    <h2 class="section-title">⑤ 이미지 분석 전체 흐름</h2>
+
+    <h3 class="sub-title">앱 → 서버 흐름</h3>
+    <div class="flow">
+      <div class="flow-step">1. 사진 촬영<br><small>CameraX</small></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">2. 이미지 압축<br><small>최대 1024×1024, JPEG 70%</small></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step server">3. POST /recycle/analyze<br><small>multipart 전송</small></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step server">4. YOLO AI 분류<br><small>aiserver 호출</small></div>
+    </div>
+    <div class="flow" style="margin-top:8px">
+      <div class="flow-step warn">confidence &lt; 0.85?</div>
+      <div class="flow-arrow">→ Yes →</div>
+      <div class="flow-step server">5. Gemini Vision<br><small>Google API</small></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step server">6. 카테고리 정규화<br><small>normalizeCategory()</small></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step server">7. DB 저장 + 포인트 지급</div>
+    </div>
+    <div class="flow" style="margin-top:8px">
+      <div class="flow-step server">8. 응답 반환<br><small>category, disposal_method, message</small></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">9. 포인트 다이얼로그</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">10. 결과 BottomSheet<br><small>showResult() 즉시 표시</small></div>
+    </div>
+
+    <h3 class="sub-title">카테고리 정규화 규칙 (서버)</h3>
+    <table>
+      <tr>
+        <th>AI가 반환할 수 있는 값 (예시)</th>
+        <th>정규화 후 저장값</th>
+        <th>앱에서 사용하는 type</th>
+        <th>화면 표시</th>
+      </tr>
+      <tr>
+        <td>pet, 페트병, bottle, pet_bottle, 음료병</td>
+        <td><code>페트병</code></td>
+        <td><code>pet</code></td>
+        <td>페트병</td>
+      </tr>
+      <tr>
+        <td>plastic, 플라스틱, plastic_container</td>
+        <td><code>플라스틱</code></td>
+        <td><code>plastic</code></td>
+        <td>플라스틱 용기류</td>
+      </tr>
+      <tr>
+        <td>paper, 종이, cardboard, 박스</td>
+        <td><code>종이</code></td>
+        <td><code>paper</code></td>
+        <td>종이류</td>
+      </tr>
+      <tr>
+        <td>glass, 유리, 유리병, glass_bottle</td>
+        <td><code>유리</code></td>
+        <td><code>glass</code></td>
+        <td>유리병류</td>
+      </tr>
+      <tr>
+        <td>metal, 캔, can, aluminum, 알루미늄캔, 철캔</td>
+        <td><code>캔</code></td>
+        <td><code>metal</code></td>
+        <td>금속캔</td>
+      </tr>
+      <tr>
+        <td>vinyl, 비닐, 비닐봉지, vinyl_bag</td>
+        <td><code>비닐</code></td>
+        <td><code>vinyl</code></td>
+        <td>비닐류</td>
+      </tr>
+      <tr>
+        <td>styrofoam, 스티로폼, foam, eps</td>
+        <td><code>스티로폼</code></td>
+        <td><code>styrofoam</code></td>
+        <td>스티로폼</td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- ⑥ 포인트 시스템 -->
+  <div class="section">
+    <h2 class="section-title">⑥ 포인트 시스템</h2>
+    <div class="grid-2">
+      <div class="rule-box">
+        <strong>📌 지급 규칙</strong>
+        AI 이미지 분석 1회: <b>+100 포인트</b><br>
+        하루 최대 획득: <b>300 포인트</b> (3회)<br>
+        수기 분리수거 기록: <b>+100 포인트</b> (무제한)
+      </div>
+      <div class="card">
+        <h3>포인트 체크 로직</h3>
+        <code style="font-size:.82rem;line-height:2;display:block">
+          오늘 획득 포인트 + 100 &le; 300 (AND)<br>
+          오늘 AI 분석 횟수 &lt; 3
+        </code>
+        <p style="font-size:.82rem;color:#666;margin-top:8px">
+          두 조건 모두 만족 시 포인트 지급. 하나라도 초과 시 "하루 보상 한도 초과" 메시지.
+        </p>
+      </div>
+    </div>
+
+    <h3 class="sub-title">관련 파일</h3>
+    <div class="grid-2">
+      <div class="card">
+        <h3><span class="badge badge-server">서버</span> RecycleService.java</h3>
+        <p style="font-size:.85rem">
+          <code>analyzeAndSave()</code> 내부에서 포인트 지급 처리.<br>
+          <code>PointHistory</code>에 reason = "AI 분석 리워드" 로 기록.
+        </p>
+      </div>
+      <div class="card">
+        <h3><span class="badge badge-client">앱</span> PointViewModel.java</h3>
+        <p style="font-size:.85rem">
+          현재 포인트: <code>GET /users/{id}/points</code><br>
+          이력: <code>GET /users/{id}/points/history</code><br>
+          LiveData로 UI 자동 업데이트.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ⑦ 랭킹 시스템 -->
+  <div class="section">
+    <h2 class="section-title">⑦ 랭킹 시스템</h2>
+    <div class="card">
+      <h3>집계 기준</h3>
+      <p style="font-size:.85rem;margin-bottom:10px">
+        <code>recycle_log</code> 테이블의 기록 횟수로 순위를 매깁니다.
+        AI 분석 1회 = 로그 1개 생성.
+      </p>
+      <pre><span class="cmt">-- RankingService.java 에서 실행되는 쿼리</span>
+<span class="kw">SELECT</span> r.user.id, r.user.username, <span class="kw">COUNT</span>(r)
+<span class="kw">FROM</span> RecycleLog r
+<span class="kw">WHERE</span> r.user <span class="kw">IS NOT NULL</span>
+<span class="kw">GROUP BY</span> r.user.id, r.user.username
+<span class="kw">ORDER BY</span> <span class="kw">COUNT</span>(r) <span class="kw">DESC</span></pre>
+    </div>
+
+    <div class="grid-2" style="margin-top:16px">
+      <div class="card">
+        <h3><span class="badge badge-server">서버</span> RankingController.java</h3>
+        <p style="font-size:.85rem">
+          <code>GET /ranking/leaderboard</code><br>
+          응답: <code>lastUpdated</code>, <code>totalUsers</code>, <code>totalRecycleCount</code>, <code>rankings[]</code>
+        </p>
+      </div>
+      <div class="card">
+        <h3><span class="badge badge-client">앱</span> RankingViewModel.java</h3>
+        <p style="font-size:.85rem">
+          <code>AndroidViewModel</code> 상속 (기본 팩토리 사용 가능).<br>
+          <code>UserManager.getInstance(application)</code>에서 ApiService 획득.<br>
+          <code>rankings</code>, <code>totalRecycleCount</code>, <code>isLoading</code> LiveData 노출.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ⑧ 인증 흐름 -->
+  <div class="section">
+    <h2 class="section-title">⑧ 인증 / 토큰 관리</h2>
+    <div class="grid-2">
+      <div class="card">
+        <h3>서버 측</h3>
+        <ul style="font-size:.85rem;padding-left:18px;line-height:2">
+          <li>로그인 성공 시 JWT 토큰 발급</li>
+          <li><code>JwtAuthenticationFilter</code>가 모든 요청 인터셉트</li>
+          <li>비밀번호는 <b>BCrypt</b>로 해싱 저장</li>
+          <li><code>@PreAuthorize("isAuthenticated()")</code>으로 보호</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>앱 측 (UserManager.java)</h3>
+        <ul style="font-size:.85rem;padding-left:18px;line-height:2">
+          <li>토큰을 <code>SharedPreferences</code>에 저장</li>
+          <li><code>isTokenExpired()</code>로 JWT exp 클레임 직접 파싱</li>
+          <li>만료 시 세션 초기화 후 로그인 화면으로</li>
+          <li>모든 API 헤더에 <code>Bearer {token}</code> 자동 첨부</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ⑨ 주요 Android 화면 -->
+  <div class="section">
+    <h2 class="section-title">⑨ 주요 Android 화면 / 컴포넌트</h2>
+    <table>
+      <tr>
+        <th>파일</th>
+        <th>역할</th>
+        <th>주요 동작</th>
+      </tr>
+      <tr>
+        <td><code>CameraActivity.java</code></td>
+        <td>카메라 촬영 + 분석</td>
+        <td>CameraX로 촬영 → 이미지 압축 → API 전송 → 결과 BottomSheet 표시</td>
+      </tr>
+      <tr>
+        <td><code>MainActivity.java</code></td>
+        <td>BottomNavigation 컨테이너</td>
+        <td>FAB 클릭 시 CameraActivity 시작 (startActivityForResult), 결과 받아 RecycleGuideFragment 이동</td>
+      </tr>
+      <tr>
+        <td><code>ResultBottomSheetDialog.java</code></td>
+        <td>분석 결과 팝업</td>
+        <td>category에 따라 아이콘/제목/설명 표시. "더보기" 클릭 시 RecycleGuideFragment로 이동</td>
+      </tr>
+      <tr>
+        <td><code>RecycleGuideFragment.java</code></td>
+        <td>분리수거 가이드</td>
+        <td>type에 따라 해당 레이아웃(fragment_plastic_recycle 등) 동적 로드</td>
+      </tr>
+      <tr>
+        <td><code>RankingFragment.java</code></td>
+        <td>랭킹 리더보드</td>
+        <td>RankingViewModel으로 데이터 로드, RecyclerView + RankingAdapter 표시</td>
+      </tr>
+      <tr>
+        <td><code>HomeFragment.java</code></td>
+        <td>메인 대시보드</td>
+        <td>포인트·분리수거 횟수 표시</td>
+      </tr>
+    </table>
+
+    <h3 class="sub-title">화면 이동 (Navigation)</h3>
+    <div class="tree">
+MainActivity (BottomNavigationView)
+├── homeFragment         <span class="note">→ 메인 홈</span>
+│   └── action → recycleGuideFragment (guideText 인자)
+├── rankingFragment      <span class="note">→ 랭킹</span>
+├── profileFragment      <span class="note">→ 프로필</span>
+└── shopFragment         <span class="note">→ 쿠폰 상점</span>
+
+FAB 클릭 → CameraActivity (별도 Activity)
+  └── 결과 반환 → onActivityResult → recycleGuideFragment 이동
+    </div>
+  </div>
+
+  <!-- ⑩ 이번에 수정된 버그 -->
+  <div class="section">
+    <h2 class="section-title">⑩ 수정된 버그 (이번 세션)</h2>
+
+    <div class="alert alert-fix">
+      <strong>버그 1 — 페트병 인식 → 알수없음 페이지</strong><br>
+      YOLO/Gemini가 "bottle", "유리병", "알루미늄캔" 등 비표준 값을 반환할 때 매핑 실패.<br>
+      → 서버에 <code>normalizeCategory()</code> 추가, Gemini 프롬프트에 허용 목록 명시, 클라이언트 매핑 확장.
+    </div>
+
+    <div class="alert alert-fix">
+      <strong>버그 2 — 랭킹 시스템 동작 안함</strong><br>
+      <code>RankingViewModel</code>이 <code>UserManager</code> 매개변수 생성자만 가져
+      <code>ViewModelProvider</code> 기본 팩토리로 인스턴스 생성 불가 → 크래시.<br>
+      → <code>ViewModel</code>을 <code>AndroidViewModel</code>로 변경, Application에서 UserManager 획득.
+    </div>
+
+    <div class="alert alert-fix">
+      <strong>버그 3 — 포인트 창 이후 결과 늦게 나옴</strong><br>
+      분석 API가 이미 category/disposal_method를 응답에 포함하는데, 불필요하게
+      <code>GET /recycle/result/{id}</code>를 한 번 더 호출해 추가 지연 발생.<br>
+      → AnalyzeResponse에서 직접 결과 사용, 다이얼로그 확인 즉시 <code>showResult()</code> 호출.
+    </div>
+
+    <div class="alert alert-info">
+      <strong>추가 개선</strong><br>
+      · <code>remaining_reward_count</code> 계산 오류 수정 (지급 후 차감 반영)<br>
+      · <code>bottomSheet.getDialog().setOnDismissListener()</code> NPE 위험 → 콜백 인터페이스 패턴으로 교체<br>
+      · <code>setupResultView</code> 내 죽은 코드 <code>type = "plastic"</code> 제거
+    </div>
+  </div>
+
+  <!-- ⑪ 서버 핵심 코드 요약 -->
+  <div class="section">
+    <h2 class="section-title">⑪ 서버 핵심 코드 요약</h2>
+
+    <h3 class="sub-title">RecycleService.analyzeAndSave() 흐름</h3>
+    <pre><span class="cmt">// 1. 이미지 임시 저장</span>
+image.transferTo(target);
+
+<span class="cmt">// 2. YOLO AI 서버 호출</span>
+<span class="cls">ResponseEntity</span>&lt;<span class="cls">Map</span>&gt; response = restTemplate.postForEntity(aiApiUrl, requestEntity, <span class="cls">Map</span>.<span class="kw">class</span>);
+<span class="cls">String</span> category   = (<span class="cls">String</span>) resultMap.getOrDefault(<span class="str">"category"</span>, <span class="str">"unknown"</span>);
+<span class="kw">double</span> confidence  = <span class="cls">Double</span>.parseDouble(resultMap.getOrDefault(<span class="str">"confidence"</span>, <span class="str">0.0</span>).toString());
+
+<span class="cmt">// 3. 신뢰도 낮으면 Gemini Vision 재판별</span>
+<span class="kw">if</span> (confidence &lt; <span class="str">0.85</span>) { <span class="cmt">/* Gemini API 호출 */</span> }
+
+<span class="cmt">// 4. 카테고리 정규화 (신규 추가)</span>
+category = normalizeCategory(category);   <span class="cmt">// "bottle" → "페트병" 등</span>
+
+<span class="cmt">// 5. DB 저장 + 포인트 지급 (하루 300p / 3회 제한)</span>
+<span class="kw">boolean</span> canReward = todayTotalPoints + 100 &lt;= 300 &amp;&amp; todayAiCount &lt; 3;
+
+<span class="cmt">// 6. 응답에 category, disposal_method, message 모두 포함</span>
+resultInfo.put(<span class="str">"category"</span>, category);
+resultInfo.put(<span class="str">"disposal_method"</span>, disposalMethod);
+resultInfo.put(<span class="str">"message"</span>, canReward ? <span class="str">"포인트가 지급되었습니다."</span> : <span class="str">"한도 초과..."</span>);</pre>
+
+    <h3 class="sub-title">RankingService.getLeaderboard()</h3>
+    <pre><span class="ann">@Transactional</span>(readOnly = <span class="kw">true</span>)
+<span class="kw">public</span> <span class="cls">LeaderboardResponse</span> getLeaderboard() {
+    <span class="cls">List</span>&lt;<span class="cls">Object</span>[]&gt; rawData = recycleLogRepository.countRecycleLogsByUser();
+    <span class="cls">List</span>&lt;<span class="cls">UserRankingDto</span>&gt; rankings = rawData.stream()
+        .map(data -&gt; <span class="kw">new</span> <span class="cls">UserRankingDto</span>(<span class="str">0</span>, (<span class="cls">Long</span>)data[<span class="str">0</span>], (<span class="cls">String</span>)data[<span class="str">1</span>], (<span class="cls">Long</span>)data[<span class="str">2</span>]))
+        .collect(<span class="cls">Collectors</span>.toList());
+
+    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="str">0</span>; i &lt; rankings.size(); i++) rankings.get(i).setRank(i + <span class="str">1</span>);
+    <span class="kw">return new</span> <span class="cls">LeaderboardResponse</span>(<span class="cls">ZonedDateTime</span>.now(),
+        recycleLogRepository.countDistinctUsers(),
+        recycleLogRepository.countTotalRecycles(), rankings);
+}</pre>
+  </div>
+
+  <!-- ⑫ 앱 핵심 코드 요약 -->
+  <div class="section">
+    <h2 class="section-title">⑫ 앱 핵심 코드 요약</h2>
+
+    <h3 class="sub-title">CameraActivity — 분석 결과 처리 (수정 후)</h3>
+    <pre><span class="cmt">// AnalyzeResponse에서 바로 category 추출 → 2차 API 호출 제거</span>
+<span class="cls">String</span> category       = analyzeResponse.getCategory();
+<span class="cls">String</span> disposalMethod = analyzeResponse.getDisposalMethod();
+<span class="cls">String</span> type           = <span class="cls">AnalysisResultResponse</span>.mapCategoryToType(category);
+
+<span class="kw">if</span> (message != <span class="kw">null</span> &amp;&amp; !message.isEmpty()) {
+    <span class="kw">new</span> AlertDialog.Builder(...)
+        .setPositiveButton(<span class="str">"확인"</span>, (d, w) -&gt; showResult(type, disposalMethod)) <span class="cmt">// 즉시!</span>
+        .show();
+} <span class="kw">else</span> {
+    showResult(type, disposalMethod);
+}</pre>
+
+    <h3 class="sub-title">RankingViewModel (수정 후)</h3>
+    <pre><span class="cmt">// AndroidViewModel → 기본 ViewModelProvider 팩토리로 생성 가능</span>
+<span class="kw">public class</span> <span class="cls">RankingViewModel</span> <span class="kw">extends</span> <span class="cls">AndroidViewModel</span> {
+    <span class="kw">public</span> <span class="cls">RankingViewModel</span>(<span class="ann">@NonNull</span> <span class="cls">Application</span> application) {
+        <span class="kw">super</span>(application);
+        <span class="kw">this</span>.apiService = <span class="cls">UserManager</span>.getInstance(application).getApiService();
+    }
+}</pre>
+
+    <h3 class="sub-title">AnalysisResultResponse.mapCategoryToType() (수정 후)</h3>
+    <pre><span class="kw">public static</span> <span class="cls">String</span> mapCategoryToType(<span class="cls">String</span> category) {
+    <span class="kw">switch</span> (category.toLowerCase().trim()) {
+        <span class="kw">case</span> <span class="str">"페트병"</span>: <span class="kw">case</span> <span class="str">"pet"</span>: <span class="kw">case</span> <span class="str">"bottle"</span>: <span class="kw">case</span> <span class="str">"pet_bottle"</span>:
+            <span class="kw">return</span> <span class="str">"pet"</span>;
+        <span class="kw">case</span> <span class="str">"유리"</span>: <span class="kw">case</span> <span class="str">"glass"</span>: <span class="kw">case</span> <span class="str">"유리병"</span>: <span class="kw">case</span> <span class="str">"glass_bottle"</span>:
+            <span class="kw">return</span> <span class="str">"glass"</span>;
+        <span class="kw">case</span> <span class="str">"캔"</span>: <span class="kw">case</span> <span class="str">"metal"</span>: <span class="kw">case</span> <span class="str">"알루미늄캔"</span>: <span class="kw">case</span> <span class="str">"철캔"</span>:
+            <span class="kw">return</span> <span class="str">"metal"</span>;
+        <span class="cmt">// ... 전체 매핑 생략</span>
+        <span class="kw">default</span>: <span class="kw">return</span> <span class="str">"plastic"</span>;
+    }
+}</pre>
+  </div>
+
+</div>
+
+<footer>
+  GreenLens Project Documentation · 생성일: 2026-06-28 · Claude Code 자동 정리
+</footer>
+</body>
+</html>
