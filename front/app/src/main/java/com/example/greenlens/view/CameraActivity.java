@@ -404,24 +404,35 @@ public class CameraActivity extends AppCompatActivity {
                     if (response.isSuccessful() && response.body() != null) {
                         AnalyzeResponse analyzeResponse = response.body();
                         String message = analyzeResponse.getMessage();
-                        Long analysisId = analyzeResponse.getAnalysisId();
+                        String category = analyzeResponse.getCategory();
+                        String disposalMethod = analyzeResponse.getDisposalMethod();
+                        String type = AnalysisResultResponse.mapCategoryToType(category);
 
                         if (message != null && !message.isEmpty()) {
-                            // 포인트 지급 메시지가 있으면 다이얼로그 표시
                             new androidx.appcompat.app.AlertDialog.Builder(CameraActivity.this)
                                     .setTitle("알림")
                                     .setMessage(message)
                                     .setPositiveButton("확인", (dialog, which) -> {
-                                        // ✅ 확인 누르면 딜레이 없이 바로 결과 조회
-                                        if (analysisId != null) {
-                                            getAnalysisResult(analysisId);
+                                        if (category != null && !category.isEmpty()) {
+                                            showResult(type, disposalMethod);
+                                        } else {
+                                            Long analysisId = analyzeResponse.getAnalysisId();
+                                            if (analysisId != null) {
+                                                getAnalysisResult(analysisId);
+                                            }
                                         }
                                     })
                                     .setCancelable(false)
                                     .show();
-                        } else if (analysisId != null) {
-                            // 메시지 없으면 바로 결과 조회
-                            getAnalysisResult(analysisId);
+                        } else {
+                            if (category != null && !category.isEmpty()) {
+                                showResult(type, disposalMethod);
+                            } else {
+                                Long analysisId = analyzeResponse.getAnalysisId();
+                                if (analysisId != null) {
+                                    getAnalysisResult(analysisId);
+                                }
+                            }
                         }
                     } else {
                         DevLog.e(TAG, "API call failed with code: " + response.code());
@@ -554,9 +565,7 @@ public class CameraActivity extends AppCompatActivity {
 
     private void showResult(String type, String disposalMethod) {
         ResultBottomSheetDialog bottomSheet = ResultBottomSheetDialog.newInstance(type, disposalMethod);
-        bottomSheet.show(getSupportFragmentManager(), "result_bottom_sheet");
-        getSupportFragmentManager().executePendingTransactions();
-        bottomSheet.getDialog().setOnDismissListener(dialog -> {
+        bottomSheet.setOnDismissCallback(() -> {
             binding.viewFinder.setVisibility(View.VISIBLE);
             binding.capturedImageView.setVisibility(View.GONE);
             binding.btnCapture.setVisibility(View.VISIBLE);
@@ -564,6 +573,7 @@ public class CameraActivity extends AppCompatActivity {
             binding.btnConfirm.setVisibility(View.GONE);
             startCamera();
         });
+        bottomSheet.show(getSupportFragmentManager(), "result_bottom_sheet");
     }
 
     @Override

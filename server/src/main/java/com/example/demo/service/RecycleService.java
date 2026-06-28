@@ -205,8 +205,9 @@ public class RecycleService {
                     String prompt = """
                         이 이미지는 분리수거 대상 물체입니다.
                         다음 항목을 JSON 형식으로만 답변해주세요. 다른 말은 하지 마세요.
+                        반드시 아래 category 값 중 하나만 사용하세요: 페트병, 플라스틱, 종이, 유리, 캔, 비닐, 스티로폼
                         {
-                          "category": "물체 종류 (예: 페트병, 유리병, 캔, 종이, 일반쓰레기 등)",
+                          "category": "위 목록 중 하나",
                           "disposal_method": "구체적인 분리수거 방법"
                         }
                         """;
@@ -253,6 +254,9 @@ public class RecycleService {
                     log.warn("Gemini Vision 호출 실패, YOLO 결과 유지: {}", e.getMessage());
                 }
             }
+
+            // 카테고리 정규화 (YOLO/Gemini 반환값을 표준 한국어로 통일)
+            category = normalizeCategory(category);
 
             // 4️⃣ 분석 결과 저장
             RecycleAnalysisResult result = new RecycleAnalysisResult();
@@ -315,7 +319,8 @@ public class RecycleService {
             resultInfo.put("category", category);
             resultInfo.put("confidence", confidence);
             resultInfo.put("disposal_method", disposalMethod);
-            resultInfo.put("remaining_reward_count", Math.max(0, DAILY_ANALYSIS_LIMIT - todayAiCount.intValue()));
+            long usedCount = canReward ? todayAiCount + 1 : todayAiCount;
+            resultInfo.put("remaining_reward_count", Math.max(0, DAILY_ANALYSIS_LIMIT - (int) usedCount));
             resultInfo.put("analysis_id", analysisId);
             resultInfo.put("created_at", ZonedDateTime.now().toString());
 
@@ -341,6 +346,37 @@ public class RecycleService {
         }
 
         return resultInfo;
+    }
+
+    private String normalizeCategory(String raw) {
+        if (raw == null || raw.isBlank()) return "플라스틱";
+        switch (raw.toLowerCase().trim()) {
+            case "pet": case "페트병": case "pet_bottle": case "pet bottle":
+            case "bottle": case "plastic_bottle": case "plastic bottle":
+            case "음료병": case "음료수병": case "투명페트":
+                return "페트병";
+            case "plastic": case "플라스틱": case "플라스틱용기": case "플라스틱 용기":
+            case "plastic_container": case "요구르트":
+                return "플라스틱";
+            case "paper": case "종이": case "cardboard": case "박스":
+            case "종이박스": case "신문지": case "종이류":
+                return "종이";
+            case "glass": case "유리": case "유리병": case "glass_bottle":
+            case "glass bottle": case "유리류":
+                return "유리";
+            case "metal": case "캔": case "금속": case "can": case "aluminum":
+            case "알루미늄": case "알루미늄캔": case "철캔": case "금속캔":
+            case "tin": case "steel": case "캔류":
+                return "캔";
+            case "vinyl": case "비닐": case "vinyl_bag": case "plastic_bag":
+            case "비닐봉지": case "비닐류": case "봉지":
+                return "비닐";
+            case "styrofoam": case "스티로폼": case "eps": case "foam":
+            case "발포스티렌": case "스티로폼류":
+                return "스티로폼";
+            default:
+                return "플라스틱";
+        }
     }
 
     public List<RecycleLogResponse> getLogsByUser(Long userId) {

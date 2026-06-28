@@ -10,8 +10,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
 
 import com.example.greenlens.R;
 import com.example.greenlens.view.MainActivity;
@@ -20,6 +18,16 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 public class ResultBottomSheetDialog extends BottomSheetDialogFragment {
     private static final String ARG_TYPE = "type";
     private static final String ARG_DISPOSAL_METHOD = "disposal_method";
+
+    public interface OnDismissCallback {
+        void onDismiss();
+    }
+
+    private OnDismissCallback dismissCallback;
+
+    public void setOnDismissCallback(OnDismissCallback callback) {
+        this.dismissCallback = callback;
+    }
 
     public static ResultBottomSheetDialog newInstance(String type) {
         return newInstance(type, null);
@@ -84,8 +92,6 @@ public class ResultBottomSheetDialog extends BottomSheetDialogFragment {
                 iconView.setImageResource(R.drawable.ic_plastic_detail);
                 titleView.setText("페트병");
                 descView.setText("무색 투명한 먹는샘물, 음료\n폴리에틸렌테레프탈레이트(PET)병");
-                // 페트병은 플라스틱으로 처리하되, 화면에는 "페트병"으로 표시
-                type = "plastic";
                 break;
             case "plastic":
                 iconView.setImageResource(R.drawable.ic_plastic_detail);
@@ -117,6 +123,14 @@ public class ResultBottomSheetDialog extends BottomSheetDialogFragment {
                 titleView.setText("스티로폼");
                 descView.setText("스티로폼 포장재\n스티로폼으로 된 재활용품");
                 break;
+        }
+    }
+
+    @Override
+    public void onDismiss(@NonNull android.content.DialogInterface dialog) {
+        super.onDismiss(dialog);
+        if (dismissCallback != null) {
+            dismissCallback.onDismiss();
         }
     }
 

@@ -1,13 +1,16 @@
 package com.example.greenlens.viewmodel;
 
+import android.app.Application;
+
+import androidx.annotation.NonNull;
+import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
 
-import com.example.greenlens.api.ApiClient;
 import com.example.greenlens.api.ApiService;
 import com.example.greenlens.model.response.LeaderboardResponse;
 import com.example.greenlens.util.DevLog;
+import com.example.greenlens.manager.UserManager;
 
 import java.util.List;
 import java.util.Map;
@@ -15,17 +18,17 @@ import java.util.Map;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import com.example.greenlens.manager.UserManager;
 
-public class RankingViewModel extends ViewModel {
+public class RankingViewModel extends AndroidViewModel {
     private final ApiService apiService;
     private final MutableLiveData<List<Map<String, Object>>> rankings = new MutableLiveData<>();
     private final MutableLiveData<Integer> totalRecycleCount = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>(false);
     private final MutableLiveData<String> errorMessage = new MutableLiveData<>();
 
-    public RankingViewModel(UserManager userManager) {
-        this.apiService = userManager.getApiService(); // ✅ UserManager에서 가져오기
+    public RankingViewModel(@NonNull Application application) {
+        super(application);
+        this.apiService = UserManager.getInstance(application).getApiService();
     }
 
     public LiveData<List<Map<String, Object>>> getRankings() {
