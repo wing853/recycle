@@ -5,6 +5,8 @@ import com.example.demo.entity.AppSettings;
 import com.example.demo.entity.Point;
 import com.example.demo.entity.User;
 import com.example.demo.repository.AppSettingsRepository;
+import com.example.demo.repository.PointHistoryRepository;
+import com.example.demo.repository.UserCouponRepository;
 import com.example.demo.repository.PointRepository;
 import com.example.demo.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +29,8 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final PointRepository pointRepository;
     private final AppSettingsRepository appSettingsRepository;
+    private final PointHistoryRepository pointHistoryRepository;
+    private final UserCouponRepository userCouponRepository;
 
     @Transactional
     public UserSignupResponse signup(UserSignupRequest request) {
@@ -111,6 +115,11 @@ public class UserService {
         if (!userRepository.existsById(userId)) {
             throw new IllegalArgumentException("사용자를 찾을 수 없습니다.");
         }
+        // users를 참조하는 데이터부터 삭제 (FK 제약). recycle_log는 User.recycleLogs cascade로 함께 삭제됨
+        pointHistoryRepository.deleteByUserId(userId);
+        userCouponRepository.deleteByUserId(userId);
+        pointRepository.deleteByUserId(userId);
+        appSettingsRepository.deleteByUserId(userId);
         userRepository.deleteById(userId);
     }
 

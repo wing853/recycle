@@ -21,4 +21,7 @@ public interface UserCouponRepository extends JpaRepository<UserCoupon, Long> {
 
     // ✅ 사용한 쿠폰 목록 조회
     List<UserCoupon> findByUserIdAndUsedTrue(Long userId);
+
+    // ✅ 회원 탈퇴 시 사용자 데이터 일괄 삭제
+    void deleteByUserId(Long userId);
 }
