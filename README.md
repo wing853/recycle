@@ -11,7 +11,7 @@
 사용자가 재활용품을 촬영하면 YOLO 기반 객체 인식 모델이 자동으로 분류 정보를 안내해주며,  
 복잡한 분리수거 기준을 몰라도 누구나 쉽고 빠르게 올바른 분리수거를 할 수 있도록 돕습니다.
 
-- 🔗 **배포 링크**: [https://recycle-8z8j.onrender.com](https://recycle-8z8j.onrender.com)
+- 🔗 **배포 링크**: [https://recycle-production-20016d67.up.railway.app](https://recycle-production-20016d67.up.railway.app)
 - 🗂 **GitHub**: [https://github.com/wing853/recycle](https://github.com/wing853/recycle)
 
 <br>
