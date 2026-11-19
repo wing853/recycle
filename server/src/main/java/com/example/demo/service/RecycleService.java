@@ -55,9 +55,6 @@ public class RecycleService {
     @Value("${ai.api.url}")
     private String aiApiUrl;
 
-    @Value("${gemini.api.key}")
-    private String geminiApiKey;
-
     // ✅ 이미지 임시 저장 경로
     @Value("${app.upload-dir}")
     private String uploadDir;
@@ -175,7 +172,7 @@ public class RecycleService {
             Path target = uploadPath.resolve(fileName);
             image.transferTo(target);
 
-            // 2️⃣ Render AI API 호출
+            // 2️⃣ AI 서버 API 호출
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 
@@ -195,67 +192,7 @@ public class RecycleService {
             double confidence = Double.parseDouble(resultMap.getOrDefault("confidence", 0.0).toString());
             String disposalMethod = (String) resultMap.getOrDefault("disposal_method", "일반 쓰레기통에 버려주세요.");
 
-            // ✅ Gemini Vision fallback (confidence 0.85 미만일 때)
-            if (confidence < 0.85) {
-                log.info("YOLO 신뢰도 낮음 ({}) → Gemini Vision으로 재판별", confidence);
-                try {
-                    byte[] imageBytes = Files.readAllBytes(target);
-                    String base64Image = java.util.Base64.getEncoder().encodeToString(imageBytes);
-
-                    String prompt = """
-                        이 이미지는 분리수거 대상 물체입니다.
-                        다음 항목을 JSON 형식으로만 답변해주세요. 다른 말은 하지 마세요.
-                        반드시 아래 category 값 중 하나만 사용하세요: 페트병, 플라스틱, 종이, 유리, 캔, 비닐, 스티로폼
-                        {
-                          "category": "위 목록 중 하나",
-                          "disposal_method": "구체적인 분리수거 방법"
-                        }
-                        """;
-
-                    HttpHeaders geminiHeaders = new HttpHeaders();
-                    geminiHeaders.setContentType(MediaType.APPLICATION_JSON);
-
-                    Map<String, Object> geminiBody = new HashMap<>();
-                    geminiBody.put("contents", List.of(
-                            Map.of("parts", List.of(
-                                    Map.of(
-                                            "inline_data", Map.of(
-                                                    "mime_type", "image/jpeg",
-                                                    "data", base64Image
-                                            )
-                                    ),
-                                    Map.of("text", prompt)
-                            ))
-                    ));
-
-                    HttpEntity<Map<String, Object>> geminiRequest = new HttpEntity<>(geminiBody, geminiHeaders);
-
-                    String geminiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=" + geminiApiKey;
-                    ResponseEntity<Map> geminiResponse = restTemplate.postForEntity(geminiUrl, geminiRequest, Map.class);
-
-                    // 응답 파싱
-                    Map<String, Object> geminiResult = geminiResponse.getBody();
-                    List<Map<String, Object>> candidates = (List<Map<String, Object>>) geminiResult.get("candidates");
-                    Map<String, Object> contentMap = (Map<String, Object>) candidates.get(0).get("content");
-                    List<Map<String, Object>> parts = (List<Map<String, Object>>) contentMap.get("parts");
-                    String geminiText = (String) parts.get(0).get("text");
-
-                    // JSON 파싱 (```json 블록 제거)
-                    geminiText = geminiText.replaceAll("```json", "").replaceAll("```", "").trim();
-
-                    com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
-                    Map<String, String> parsedResult = mapper.readValue(geminiText, Map.class);
-
-                    category = parsedResult.getOrDefault("category", category);
-                    disposalMethod = parsedResult.getOrDefault("disposal_method", disposalMethod);
-                    log.info("Gemini Vision 재판별 완료 → category: {}", category);
-
-                } catch (Exception e) {
-                    log.warn("Gemini Vision 호출 실패, YOLO 결과 유지: {}", e.getMessage());
-                }
-            }
-
-            // 카테고리 정규화 (YOLO/Gemini 반환값을 표준 한국어로 통일)
+            // 카테고리 정규화 (YOLO 반환값을 표준 한국어로 통일)
             category = normalizeCategory(category);
 
             // 4️⃣ 분석 결과 저장
