@@ -37,8 +37,8 @@ public class SecurityConfig {
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/users/signup", "/users/login","/recycle/analyze").permitAll()
-                        .requestMatchers("/actuator/**").permitAll()
+                        .requestMatchers("/", "/users/signup", "/users/login").permitAll()
+                        .requestMatchers("/actuator/health").permitAll()
                         .anyRequest().authenticated()
                 )
                 // ✅ JWT 필터 등록 (이거 반드시 있어야 함)
