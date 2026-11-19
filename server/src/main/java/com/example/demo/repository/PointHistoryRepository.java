@@ -24,4 +24,7 @@ public interface PointHistoryRepository extends JpaRepository<PointHistory, Long
     // ✅ 오늘 AI 분석 리워드 횟수
     @Query("SELECT COUNT(p) FROM PointHistory p WHERE p.user.id = :userId AND DATE(p.date) = CURRENT_DATE AND p.reason = 'AI 분석 리워드'")
     Long getTodayAiRewardCount(@Param("userId") Long userId);
+
+    // ✅ 회원 탈퇴 시 사용자 데이터 일괄 삭제
+    void deleteByUserId(Long userId);
 }

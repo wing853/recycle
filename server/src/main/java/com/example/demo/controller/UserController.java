@@ -67,12 +67,8 @@ public class UserController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> getUserById(@PathVariable Long user_id, @AuthenticationPrincipal User me) {
         if (!isOwner(me, user_id)) return forbidden();
-        Optional<User> user = userService.getUserById(user_id);
-        if (user.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("{\"message\": \"사용자를 찾을 수 없습니다.\"}");
-        }
-        return ResponseEntity.ok(user.get());
+        // 엔티티를 그대로 반환하면 지연 로딩 직렬화 오류 → 프로필 DTO로 응답
+        return getProfile(me);
     }
 
     @PutMapping("/{user_id}")
@@ -103,6 +99,18 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body("{\"error\": \"" + e.getMessage() + "\"}");
         }
+    }
+
+    /** ✅ 회원 탈퇴 (본인 계정) - 앱 SettingActivity에서 호출 */
+    @DeleteMapping("/profile")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> deleteMyAccount(@AuthenticationPrincipal User me,
+                                             @RequestHeader(value = "Authorization", required = false) String token) {
+        userService.deleteUser(me.getId());
+        if (token != null && token.startsWith("Bearer ")) {
+            jwtService.invalidateToken(token.substring(7));
+        }
+        return ResponseEntity.ok(Map.of("message", "계정 삭제 성공!"));
     }
 
     @GetMapping("/profile")
