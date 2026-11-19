@@ -1,0 +1,49 @@
+name: Android APK
+
+on:
+  push:
+    branches: [main, claude/git-dual-connection-check-g0lkzy]
+    paths: ["front/**", ".github/workflows/android-apk.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: front
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Build debug APK
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug --no-daemon
+          cp app/build/outputs/apk/debug/app-debug.apk "$GITHUB_WORKSPACE/greenlens-debug.apk"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: greenlens-debug-apk
+          path: greenlens-debug.apk
+
+      # 폰에서 바로 받을 수 있도록 빌드마다 새 pre-release에 APK 첨부
+      - name: Publish to release
+        working-directory: .
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "apk-${GITHUB_RUN_NUMBER}" greenlens-debug.apk \
+            --prerelease \
+            --target "$GITHUB_SHA" \
+            --title "GreenLens 테스트 APK #${GITHUB_RUN_NUMBER} (${GITHUB_SHA::7})" \
+            --notes "자동 빌드된 debug APK입니다. 폰에서 greenlens-debug.apk를 눌러 설치하세요."
