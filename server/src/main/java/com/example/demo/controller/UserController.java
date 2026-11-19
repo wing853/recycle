@@ -65,7 +65,8 @@ public class UserController {
 
     @GetMapping("/{user_id}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> getUserById(@PathVariable Long user_id) {
+    public ResponseEntity<?> getUserById(@PathVariable Long user_id, @AuthenticationPrincipal User me) {
+        if (!isOwner(me, user_id)) return forbidden();
         Optional<User> user = userService.getUserById(user_id);
         if (user.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -76,7 +77,9 @@ public class UserController {
 
     @PutMapping("/{user_id}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> updateUser(@PathVariable Long user_id, @RequestBody UserUpdateRequest request) {
+    public ResponseEntity<?> updateUser(@PathVariable Long user_id, @RequestBody UserUpdateRequest request,
+                                        @AuthenticationPrincipal User me) {
+        if (!isOwner(me, user_id)) return forbidden();
         try {
             UserUpdateResponse response = userService.updateUser(user_id, request);
             return ResponseEntity.ok(response);
@@ -91,7 +94,8 @@ public class UserController {
 
     @DeleteMapping("/{user_id}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> deleteUser(@PathVariable("user_id") Long userId) {
+    public ResponseEntity<?> deleteUser(@PathVariable("user_id") Long userId, @AuthenticationPrincipal User me) {
+        if (!isOwner(me, userId)) return forbidden();
         try {
             userService.deleteUser(userId);
             return ResponseEntity.ok().body("{\"message\": \"계정 삭제 성공!\"}");
@@ -129,7 +133,8 @@ public class UserController {
 
     @GetMapping("/{user_id}/points")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> getUserPoints(@PathVariable("user_id") Long userId) {
+    public ResponseEntity<?> getUserPoints(@PathVariable("user_id") Long userId, @AuthenticationPrincipal User me) {
+        if (!isOwner(me, userId)) return forbidden();
         try {
             Point point = recycleService.getUserPointInfo(userId);
             Map<String, Object> response = new HashMap<>();
@@ -147,7 +152,9 @@ public class UserController {
     @PostMapping("/{user_id}/points/use")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> usePoints(@PathVariable("user_id") Long userId,
-                                       @RequestBody PointUsageRequest request) {
+                                       @RequestBody PointUsageRequest request,
+                                       @AuthenticationPrincipal User me) {
+        if (!isOwner(me, userId)) return forbidden();
         try {
             PointUsageResponse response = userService.usePoints(userId, request);
             return ResponseEntity.ok(response);
@@ -207,5 +214,15 @@ public class UserController {
         }
         UserCouponBoxResponse response = userCouponService.getUserCoupons(userId);
         return ResponseEntity.ok(response);
+    }
+
+    // ✅ 본인 리소스인지 확인 (다른 사용자 id로 접근 차단)
+    private boolean isOwner(User me, Long userId) {
+        return me != null && userId != null && userId.equals(me.getId());
+    }
+
+    private ResponseEntity<?> forbidden() {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(Map.of("message", "본인 계정에만 접근할 수 있습니다."));
     }
 }

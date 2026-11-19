@@ -4,6 +4,7 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
@@ -16,9 +17,15 @@ public class JwtService {
 
     private static final Logger logger = LoggerFactory.getLogger(JwtService.class);
 
-    // ✅ 안전하고 충분히 긴 시크릿 키 (Base64 필요 없음)
-    private static final String SECRET = "my-super-secure-and-long-secret-key-1234567890";
-    private static final SecretKey SIGNING_KEY = Keys.hmacShaKeyFor(SECRET.getBytes(StandardCharsets.UTF_8));
+    // ✅ 시크릿 키는 JWT_SECRET 환경변수로 주입 (코드에 하드코딩 금지)
+    private final SecretKey SIGNING_KEY;
+
+    public JwtService(@Value("${jwt.secret:}") String secret) {
+        if (secret == null || secret.getBytes(StandardCharsets.UTF_8).length < 32) {
+            throw new IllegalStateException("JWT_SECRET 환경변수가 없거나 너무 짧습니다 (32바이트 이상 필요).");
+        }
+        this.SIGNING_KEY = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+    }
 
     private final Set<String> blacklistedTokens = ConcurrentHashMap.newKeySet();
 
@@ -42,7 +49,7 @@ public class JwtService {
     // ✅ 토큰 유효성 검사
     public boolean validateToken(String token) {
         if (blacklistedTokens.contains(token)) {
-            logger.warn("🚫 블랙리스트된 토큰입니다: {}", token);
+            logger.warn("🚫 블랙리스트된 토큰으로 요청됨");
             return false;
         }
         try {
@@ -117,7 +124,7 @@ public class JwtService {
     // ✅ 토큰 블랙리스트 등록
     public void invalidateToken(String token) {
         blacklistedTokens.add(token);
-        logger.info("🚫 토큰 블랙리스트 추가됨: {}", token);
+        logger.info("🚫 토큰 블랙리스트 추가됨");
     }
 }
 
