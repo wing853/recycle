@@ -25,7 +25,7 @@ public class DemoApplication {
         String port = env.getProperty("PORT");
         String serverPort = env.getProperty("server.port");
 
-        System.out.println("✅ Render PORT: " + port);
+        System.out.println("✅ PORT: " + port);
         System.out.println("✅ server.port: " + serverPort);
     }
 

@@ -51,7 +51,7 @@ public class RecycleService {
     private final UserRepository userRepository;
 
 
-    // ✅ Render AI 서버 URL
+    // ✅ AI 서버 URL (AI_API_URL 환경변수)
     @Value("${ai.api.url}")
     private String aiApiUrl;
 
